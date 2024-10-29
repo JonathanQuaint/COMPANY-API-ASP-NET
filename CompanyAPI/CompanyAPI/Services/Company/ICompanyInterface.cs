@@ -5,7 +5,9 @@ namespace CompanyAPI.Services.Company
 {
     public interface ICompanyInterface
     {
-        Task<CompanyModel> CreateCompany(CreateCompanyDTO companyDto);
+        Task<ResponseModel<List<CompanyModel>>> CreateCompany(CreateCompanyDTO companyDto);
+
+        Task<ResponseModel<List<CompanyModel>>> UpdateCompany(EditCompanyDTOS companyInfos);
 
         Task<ResponseModel<List<CompanyModel>>> ListExpenseInCompany();
 

@@ -7,15 +7,15 @@ namespace CompanyAPI.ViewModel
         public int Id { get; set; }
         public string Name { get; set; }
 
-
-        [JsonIgnore]
-        public AreaModel Area { get; set; }
+        public int AreaId { get; set; }
+     
+        public AreaModel AreaLinked { get; set; }
 
         public EmployeeModel() { }
         public EmployeeModel(string name, AreaModel area)
         {
             Name = name;
-            Area = area;
+            AreaLinked = area;
         }
 
 

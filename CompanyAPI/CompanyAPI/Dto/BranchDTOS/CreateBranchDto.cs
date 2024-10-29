@@ -4,5 +4,7 @@
     {
         public string HeadOffice { get; set; }
 
+        public int CompanyLinkedID { get; set; }
+
     }
 }

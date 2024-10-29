@@ -20,15 +20,26 @@ namespace CompanyAPI.Controllers
            _companyInterface = companyInterface;
         }
 
+        //POST: Creating Company 
         [HttpPost("CreateCompany")]
-        public async Task<ActionResult<CompanyModel>> CreateCompany(CreateCompanyDTO companyCreate)
+        public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> CreateCompany(CreateCompanyDTO companyCreate)
         {
             var company = await _companyInterface.CreateCompany(companyCreate);
+           
+            return Ok(company);
 
+        }
+
+        //POST:  Edit Company Details 
+        [HttpPost("EditCompany")]
+        public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> EditCompany(EditCompanyDTOS companyInfos)
+        {
+            var company = await _companyInterface.UpdateCompany(companyInfos);
 
             return Ok(company);
 
         }
-     
+
+
     }
 }

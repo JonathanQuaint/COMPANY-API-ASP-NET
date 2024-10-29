@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CompanyAPI.ViewModel
 {
@@ -6,7 +7,15 @@ namespace CompanyAPI.ViewModel
     {
         public int Id { get; set; }
         public string HeadOffice { get; set; }
+
+        public int CompanyID { get; set; }
+
+        public CompanyModel CompanyLinked { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:F2}")]
         public double Expense { get; set; }
+
+       
 
         [JsonIgnore]
         public ICollection<AreaModel> Areas { get; set; } = new List<AreaModel>();

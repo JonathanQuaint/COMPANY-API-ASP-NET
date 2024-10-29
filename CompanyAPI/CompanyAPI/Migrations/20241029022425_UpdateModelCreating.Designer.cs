@@ -4,6 +4,7 @@ using CompanyAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CompanyAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241029022425_UpdateModelCreating")]
+    partial class UpdateModelCreating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace CompanyAPI.Migrations
 
                     b.HasIndex("BranchId");
 
-                    b.ToTable("Areas", (string)null);
+                    b.ToTable("Areas");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.BranchModel", b =>
@@ -69,7 +72,7 @@ namespace CompanyAPI.Migrations
 
                     b.HasIndex("CompanyID");
 
-                    b.ToTable("Branchs", (string)null);
+                    b.ToTable("Branchs");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.CompanyModel", b =>
@@ -92,7 +95,7 @@ namespace CompanyAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Company", (string)null);
+                    b.ToTable("Company");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.EmployeeModel", b =>
@@ -124,7 +127,7 @@ namespace CompanyAPI.Migrations
 
                     b.HasIndex("BranchModelId");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.EquipmentModel", b =>
@@ -159,7 +162,7 @@ namespace CompanyAPI.Migrations
 
                     b.HasIndex("BranchModelId");
 
-                    b.ToTable("Equipments", (string)null);
+                    b.ToTable("Equipments");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.AreaModel", b =>

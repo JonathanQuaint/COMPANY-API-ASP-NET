@@ -4,6 +4,7 @@ using CompanyAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CompanyAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241028210808_ImplementBranchModelDatabase")]
+    partial class ImplementBranchModelDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,11 +33,11 @@ namespace CompanyAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BranchId")
-                        .HasColumnType("int");
-
                     b.Property<double>("Expense")
                         .HasColumnType("float");
+
+                    b.Property<int>("LinkedBranchId")
+                        .HasColumnType("int");
 
                     b.Property<string>("NameArea")
                         .IsRequired()
@@ -42,9 +45,9 @@ namespace CompanyAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BranchId");
+                    b.HasIndex("LinkedBranchId");
 
-                    b.ToTable("Areas", (string)null);
+                    b.ToTable("Areas");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.BranchModel", b =>
@@ -55,7 +58,7 @@ namespace CompanyAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CompanyID")
+                    b.Property<int>("CompanyLinkedID")
                         .HasColumnType("int");
 
                     b.Property<double>("Expense")
@@ -67,9 +70,9 @@ namespace CompanyAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyID");
+                    b.HasIndex("CompanyLinkedID");
 
-                    b.ToTable("Branchs", (string)null);
+                    b.ToTable("Branchs");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.CompanyModel", b =>
@@ -92,7 +95,7 @@ namespace CompanyAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Company", (string)null);
+                    b.ToTable("Company");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.EmployeeModel", b =>
@@ -106,9 +109,6 @@ namespace CompanyAPI.Migrations
                     b.Property<int>("AreaId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AreaModelId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("BranchModelId")
                         .HasColumnType("int");
 
@@ -120,11 +120,9 @@ namespace CompanyAPI.Migrations
 
                     b.HasIndex("AreaId");
 
-                    b.HasIndex("AreaModelId");
-
                     b.HasIndex("BranchModelId");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.EquipmentModel", b =>
@@ -136,9 +134,6 @@ namespace CompanyAPI.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AreaId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("AreaModelId")
                         .HasColumnType("int");
 
                     b.Property<int?>("BranchModelId")
@@ -155,18 +150,16 @@ namespace CompanyAPI.Migrations
 
                     b.HasIndex("AreaId");
 
-                    b.HasIndex("AreaModelId");
-
                     b.HasIndex("BranchModelId");
 
-                    b.ToTable("Equipments", (string)null);
+                    b.ToTable("Equipments");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.AreaModel", b =>
                 {
                     b.HasOne("CompanyAPI.ViewModel.BranchModel", "LinkedBranch")
                         .WithMany("Areas")
-                        .HasForeignKey("BranchId")
+                        .HasForeignKey("LinkedBranchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -177,7 +170,7 @@ namespace CompanyAPI.Migrations
                 {
                     b.HasOne("CompanyAPI.ViewModel.CompanyModel", "CompanyLinked")
                         .WithMany("Branch")
-                        .HasForeignKey("CompanyID")
+                        .HasForeignKey("CompanyLinkedID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -186,40 +179,32 @@ namespace CompanyAPI.Migrations
 
             modelBuilder.Entity("CompanyAPI.ViewModel.EmployeeModel", b =>
                 {
-                    b.HasOne("CompanyAPI.ViewModel.AreaModel", "AreaLinked")
-                        .WithMany()
+                    b.HasOne("CompanyAPI.ViewModel.AreaModel", "Area")
+                        .WithMany("Employees")
                         .HasForeignKey("AreaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("CompanyAPI.ViewModel.AreaModel", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("AreaModelId");
 
                     b.HasOne("CompanyAPI.ViewModel.BranchModel", null)
                         .WithMany("Employees")
                         .HasForeignKey("BranchModelId");
 
-                    b.Navigation("AreaLinked");
+                    b.Navigation("Area");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.EquipmentModel", b =>
                 {
-                    b.HasOne("CompanyAPI.ViewModel.AreaModel", "AreaLinked")
-                        .WithMany()
+                    b.HasOne("CompanyAPI.ViewModel.AreaModel", "Area")
+                        .WithMany("Equipments")
                         .HasForeignKey("AreaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("CompanyAPI.ViewModel.AreaModel", null)
-                        .WithMany("Equipments")
-                        .HasForeignKey("AreaModelId");
 
                     b.HasOne("CompanyAPI.ViewModel.BranchModel", null)
                         .WithMany("Equipments")
                         .HasForeignKey("BranchModelId");
 
-                    b.Navigation("AreaLinked");
+                    b.Navigation("Area");
                 });
 
             modelBuilder.Entity("CompanyAPI.ViewModel.AreaModel", b =>

@@ -5,7 +5,9 @@
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public AreaModel Area { get; set; }
+        public int AreaId { get; set; }
+
+        public AreaModel AreaLinked { get; set; }
 
         public double Price { get; set; }
 
@@ -20,7 +22,7 @@
             Id = id;
             Name = name;
             Price = price;
-            Area = area;
+            AreaLinked = area;
         }
     }
 }

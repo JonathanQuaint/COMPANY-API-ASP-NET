@@ -1,5 +1,6 @@
 ﻿using CompanyAPI.Data;
 using CompanyAPI.Dto.CompanyDTOS;
+using CompanyAPI.Services.Exceptions;
 using CompanyAPI.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -16,57 +17,114 @@ namespace CompanyAPI.Services.Company
             _context = context;
         }
 
-        public async Task<CompanyModel> CreateCompany(CreateCompanyDTO companyDto)
+        public async Task<ResponseModel<List<CompanyModel>>> CreateCompany(CreateCompanyDTO companyInfos)
         {
-            ResponseModel<CompanyModel> reply = new();
+            ResponseModel<List<CompanyModel>> reply = new();
 
+            try
+            {
+                bool CompanyExist = await _context.Company.AnyAsync(x => x.Name == companyInfos.Name);
+                if (CompanyExist)
+                {
+
+                    throw new ConflictException("The company name already exists");
+
+                }
                 var company = new CompanyModel()
                 {
 
-                    Name = companyDto.Name,
-                    MonthyBilling = companyDto.MonthyBilling
+                    Name = companyInfos.Name,
+                    MonthyBilling = companyInfos.MonthyBilling
 
                 };
 
-                
 
                 _context.Add(company);
                 await _context.SaveChangesAsync();
 
-                     return company;
+                reply.Dados = await _context.Company.ToListAsync();
+                reply.Mensagem = "Company successfully registered";
 
+                return reply;
+            }
+
+            catch (DbUpdateException ex) 
+            { 
+            
+               throw new DbUpdateException(ex.Message); 
+            
+            }
         }
 
-        public Task<ResponseModel<List<CompanyModel>>> ListAllAreas()
+        public async Task<ResponseModel<List<CompanyModel>>> UpdateCompany(EditCompanyDTOS companyInfos)
         {
-            throw new NotImplementedException();
+            ResponseModel<List<CompanyModel>> reply = new();
+
+            bool hasAny = await _context.Company.AnyAsync(x => x.Name == companyInfos.Name);
+            if (!hasAny)
+            {
+                throw new NotFoundException("Name of the company not found");
+
+            }
+
+            try
+            {
+                var company = await _context.Company.FirstOrDefaultAsync(x => x.Name == companyInfos.Name);
+                
+                company.Name = companyInfos.Name;
+
+                company.MonthyBilling = companyInfos.MonthyBilling; 
+
+                _context.Update(company);
+
+                await _context.SaveChangesAsync();
+
+                reply.Dados = await _context.Company.ToListAsync();
+                reply.Mensagem = "Company updated successfully";
+
+                return reply;
+
+            }
+
+            catch (DbUpdateConcurrencyException e) 
+            {
+                throw new DbUpdateException(e.Message);
+
+
+            }
         }
 
-        public Task<ResponseModel<List<CompanyModel>>> ListAllBranchs()
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<ResponseModel<List<CompanyModel>>> ListAllEmployees()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ResponseModel<List<CompanyModel>>> ListAllEquipments()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ResponseModel<List<CompanyModel>>> ListAllInCompany()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ResponseModel<List<CompanyModel>>> ListExpenseInCompany()
-        {
-            throw new NotImplementedException();
-        }
-
-      
+    public Task<ResponseModel<List<CompanyModel>>> ListAllAreas()
+    {
+        throw new NotImplementedException();
     }
+
+    public Task<ResponseModel<List<CompanyModel>>> ListAllBranchs()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ResponseModel<List<CompanyModel>>> ListAllEmployees()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ResponseModel<List<CompanyModel>>> ListAllEquipments()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ResponseModel<List<CompanyModel>>> ListAllInCompany()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ResponseModel<List<CompanyModel>>> ListExpenseInCompany()
+    {
+        throw new NotImplementedException();
+    }
+
+
+}
 }
