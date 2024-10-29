@@ -5,7 +5,7 @@
         public int IdBranch { get; set; }
         public string HeadOffice { get; set; }
 
-        public string CompanyLinkedName { get; set; }
+        public int CompanyLinkedID { get; set; }
 
     }
 }

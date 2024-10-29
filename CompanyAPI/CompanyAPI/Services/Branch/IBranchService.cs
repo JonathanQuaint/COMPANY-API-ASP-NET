@@ -7,5 +7,8 @@ namespace CompanyAPI.Services.Branch
     {
         Task<ResponseModel<List<BranchModel>>> CreateFilial(CreateBranchDto branchDto);
         Task<ResponseModel<List<BranchModel>>> UpdateFilial(EditBranchDto branchDto);
+        Task<ResponseModel<BranchModel>> InformationsAboutBranch(int branchId);
+
+
     }
 }

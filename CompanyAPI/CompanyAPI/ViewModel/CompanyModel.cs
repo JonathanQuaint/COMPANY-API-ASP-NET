@@ -24,5 +24,8 @@ namespace CompanyAPI.ViewModel
             Name = name;
             MonthyBilling = monthyBilling;
         }
+
+           
+
     }
 }

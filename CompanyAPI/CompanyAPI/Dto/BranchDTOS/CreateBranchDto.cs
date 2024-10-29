@@ -6,5 +6,7 @@
 
         public int CompanyLinkedID { get; set; }
 
+        
+
     }
 }

@@ -60,7 +60,7 @@ namespace CompanyAPI.Services.Company
         {
             ResponseModel<List<CompanyModel>> reply = new();
 
-            bool hasAny = await _context.Company.AnyAsync(x => x.Name == companyInfos.Name);
+            bool hasAny = await _context.Company.AnyAsync(x => x.Id == companyInfos.Id);
             if (!hasAny)
             {
                 throw new NotFoundException("Name of the company not found");
@@ -69,7 +69,7 @@ namespace CompanyAPI.Services.Company
 
             try
             {
-                var company = await _context.Company.FirstOrDefaultAsync(x => x.Name == companyInfos.Name);
+                var company = await _context.Company.FirstOrDefaultAsync(x => x.Id == companyInfos.Id);
                 
                 company.Name = companyInfos.Name;
 
@@ -94,6 +94,31 @@ namespace CompanyAPI.Services.Company
             }
         }
 
+
+        public async Task<ResponseModel<CompanyModel>> InformationsAboutTheCompany(int companyId)
+        {
+            ResponseModel<CompanyModel> reply = new();
+            try
+            {
+                var company = await _context.Company
+                    .Include(x => x.Expense)
+                    .Include(x => x.Branch)
+                    .FirstOrDefaultAsync(x => x.Id == companyId);
+
+                if (company == null)
+                {
+                    throw new NotFoundException("Company not found");
+                }
+
+                reply.Dados = company;
+                reply.Mensagem = "Company information successfully retrieved";
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving Company information: {ex.Message}");
+            }
+        }
 
     public Task<ResponseModel<List<CompanyModel>>> ListAllAreas()
     {

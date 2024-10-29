@@ -41,5 +41,14 @@ namespace CompanyAPI.Controllers
         }
 
 
+        //GET: Company Details 
+        [HttpGet("CompanyDetails")]
+        public async Task<ActionResult<ResponseModel<CompanyModel>>> DetailsCompany(int companyID)
+        {
+            var company = await _companyInterface.InformationsAboutTheCompany(companyID);
+
+            return Ok(company);
+
+        }
     }
 }

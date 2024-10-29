@@ -9,6 +9,8 @@ namespace CompanyAPI.Services.Company
 
         Task<ResponseModel<List<CompanyModel>>> UpdateCompany(EditCompanyDTOS companyInfos);
 
+        Task<ResponseModel<CompanyModel>> InformationsAboutTheCompany(int companyId);
+
         Task<ResponseModel<List<CompanyModel>>> ListExpenseInCompany();
 
         Task<ResponseModel<List<CompanyModel>>> ListAllBranchs();

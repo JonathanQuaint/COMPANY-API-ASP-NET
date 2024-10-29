@@ -27,9 +27,9 @@ namespace CompanyAPI.Controllers
         [HttpPost("CreateFilial")]
         public async Task<ActionResult<ResponseModel<List<BranchModel>>>> CreateFilial(CreateBranchDto branchInfos)
         {
-            var company = await _branchService.CreateFilial(branchInfos);
+            var branch = await _branchService.CreateFilial(branchInfos);
 
-            return Ok(company);
+            return Ok(branch);
 
         }
 
@@ -37,13 +37,22 @@ namespace CompanyAPI.Controllers
         [HttpPost("EditFilial")]
         public async Task<ActionResult<ResponseModel<List<BranchModel>>>> EditCompany(EditBranchDto branchInfos)
         {
-            var company = await _branchService.UpdateFilial(branchInfos);
+            var branch = await _branchService.UpdateFilial(branchInfos);
 
-            return Ok(company);
+            return Ok(branch);
 
         }
 
 
-       
+        //GET:  Filial Details 
+        [HttpGet("FilialDetails")]
+        public async Task<ActionResult<ResponseModel<BranchModel>>> DetailsFilial(int branchID)
+        {
+            var branch = await _branchService.InformationsAboutBranch(branchID);
+
+            return Ok(branch);
+
+        }
+
     }
 }
