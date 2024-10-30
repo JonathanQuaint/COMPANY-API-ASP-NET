@@ -1,6 +1,7 @@
 ﻿using CompanyAPI.Data;
 using CompanyAPI.Dto.BranchDTOS;
 using CompanyAPI.Dto.CompanyDTOS;
+using CompanyAPI.Repository.Branch;
 using CompanyAPI.Services.Exceptions;
 using CompanyAPI.ViewModel;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,11 @@ namespace CompanyAPI.Services.Branch
 {
     public class BranchService : IBranchService
     {
-        private readonly AppDbContext _context;
+        private readonly IBranchRepository _branchRepository;
 
-        public BranchService(AppDbContext context)
+        public BranchService(IBranchRepository branchRepository)
         {
-            _context = context;
+            _branchRepository = branchRepository;
         }
 
         public async Task<ResponseModel<List<BranchModel>>> CreateFilial(CreateBranchDto branchDto)
@@ -23,17 +24,10 @@ namespace CompanyAPI.Services.Branch
 
             try
             {
-                bool branchExists = await _context.Branchs.AnyAsync(x => x.HeadOffice == branchDto.HeadOffice);
-                bool CompanyExists = await _context.Company.AnyAsync(x => x.Id == branchDto.CompanyLinkedID);
-
+                bool branchExists = await _branchRepository.CheckBranchExistByHeadOfficeAsync(branchDto.HeadOffice);
                 if (branchExists)
                 {
                     throw new ConflictException("This HeadOffice already exists");
-                }
-
-                if (!CompanyExists)
-                {
-                    throw new NotFoundException("Id of the company not found");
                 }
 
                 var Branch = new BranchModel()
@@ -41,21 +35,13 @@ namespace CompanyAPI.Services.Branch
                     HeadOffice = branchDto.HeadOffice,
                 };
 
-                // Company Linked of the filial
-                var companyLinked = await _context.Company.FirstOrDefaultAsync(x => x.Id == branchDto.CompanyLinkedID);
 
-                if (companyLinked == null)
-                {
-                    throw new ConflictException("Error companyLinked is null");
-                }
+                Branch.CompanyID = branchDto.CompanyLinkedID;
 
-                Branch.CompanyID = companyLinked.Id;
-                Branch.CompanyLinked = companyLinked;
 
-                _context.Add(Branch);
-                await _context.SaveChangesAsync();
-                companyLinked.Branch.Add(Branch);
-                reply.Dados = await _context.Branchs.ToListAsync();
+                await _branchRepository.AddBranchAsync(Branch);
+               
+                reply.Dados = await _branchRepository.GetBranchesInCompanyAsync(Branch.Id);
                 reply.Mensagem = "successfully registered branch";
 
                 return reply;
@@ -73,40 +59,24 @@ namespace CompanyAPI.Services.Branch
 
             try
             {
-                bool branchExists = await _context.Branchs.AnyAsync(x => x.Id == branchDto.IdBranch);
-                bool CompanyExists = await _context.Company.AnyAsync(x => x.Id == branchDto.CompanyLinkedID);
+                bool branchExists = await _branchRepository.CheckBranchExistByIdAsync(branchDto.IdBranch);
+           
 
                 if (!branchExists)
                 {
                     throw new NotFoundException("Branch not found");
                 }
 
-                if (!CompanyExists)
-                {
-                    throw new NotFoundException("CompanyID not found");
-                }
 
-                var branch = await _context.Branchs.FindAsync(branchDto.IdBranch);
+                var branch = await _branchRepository.GetBranchByIdAsync(branchDto.IdBranch);
 
-                if (branch == null)
-                {
-                    throw new ConflictException("Error branch is null");
-                }
-
-                bool companyIsSimilar = branch.CompanyID == branchDto.CompanyLinkedID;
-
-                if (!companyIsSimilar)
-                {
-                    branch.CompanyLinked = await _context.Company.FindAsync(branch.CompanyID);
-                    branch.CompanyID = branchDto.CompanyLinkedID;
-                }
+                branch.CompanyID = branchDto.CompanyLinkedID;
 
                 branch.HeadOffice = branchDto.HeadOffice;
 
-                _context.Update(branch);
-                await _context.SaveChangesAsync();
+                await _branchRepository.UpdateBranchAsync(branch);
 
-                reply.Dados = await _context.Branchs.ToListAsync();
+                reply.Dados = await _branchRepository.GetBranchesInCompanyAsync(branchDto.CompanyLinkedID);
                 reply.Mensagem = "Branch updated successfully";
 
                 return reply;
@@ -123,12 +93,7 @@ namespace CompanyAPI.Services.Branch
 
             try
             {
-                var branch = await _context.Branchs
-                    .Include(b => b.Areas)
-                    .Include(b => b.Employees)
-                    .Include(b => b.Equipments)
-                    .Include(b => b.CompanyLinked)
-                    .FirstOrDefaultAsync(b => b.Id == branchId);
+                var branch = await _branchRepository.GetAllDetailsAboutBranchAsync(branchId);
 
                 if (branch == null)
                 {

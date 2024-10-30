@@ -2,7 +2,7 @@
 {
     public class EditCompanyDTOS
     {
-        public int Id { get; set; }
+        public int IdOfCompany { get; set; }
        
         public string Name { get; set; }
 

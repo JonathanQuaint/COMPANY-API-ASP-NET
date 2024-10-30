@@ -4,6 +4,8 @@ using CompanyAPI.Services.Company;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Linq;
+using CompanyAPI.Repository.Branch;
+using CompanyAPI.Repository.Company;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,10 @@ builder.Services.AddControllers()
     });
 
 
+builder.Services.AddScoped<IBranchService, BranchService>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<IBranchRepository, BranchRepository>();
+builder.Services.AddScoped<ICompanyInterface, CompanyService>();
 builder.Services.AddScoped<IBranchService, BranchService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>

@@ -11,9 +11,9 @@ namespace CompanyAPI.Services.Company
 
         Task<ResponseModel<CompanyModel>> InformationsAboutTheCompany(int companyId);
 
-        Task<ResponseModel<List<CompanyModel>>> ListExpenseInCompany();
+        Task<ResponseModel<List<CompanyModel>>> ListAllBranchsInCompany(int companyId);
 
-        Task<ResponseModel<List<CompanyModel>>> ListAllBranchs();
+        Task<ResponseModel<List<CompanyModel>>> ListExpenseInCompany();
 
         Task<ResponseModel<List<CompanyModel>>> ListAllAreas();
 
