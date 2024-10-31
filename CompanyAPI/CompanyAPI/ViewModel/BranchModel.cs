@@ -13,7 +13,7 @@ namespace CompanyAPI.ViewModel
         public CompanyModel CompanyLinked { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:F2}")]
-        public double Expense { get; set; } = 0;
+        public double Expense { get; set; }
 
        
 

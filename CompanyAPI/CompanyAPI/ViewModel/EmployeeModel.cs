@@ -11,6 +11,8 @@ namespace CompanyAPI.ViewModel
      
         public AreaModel AreaLinked { get; set; }
 
+        public double Salary { get; set; }
+
         public EmployeeModel() { }
         public EmployeeModel(string name, AreaModel area)
         {
