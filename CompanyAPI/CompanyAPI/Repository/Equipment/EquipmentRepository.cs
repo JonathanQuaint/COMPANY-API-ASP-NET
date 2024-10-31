@@ -28,6 +28,8 @@ namespace CompanyAPI.Repository.Equipment
             {
                 equipment.AreaLinked = areaLinked;
                 areaLinked.Equipments.Add(equipment);
+                areaLinked.LinkedBranch.Equipments.Add(equipment);
+                areaLinked.Expense += equipment.Price;
             }
 
             await _context.Equipments.AddAsync(equipment);
@@ -69,6 +71,7 @@ namespace CompanyAPI.Repository.Equipment
             await _context.SaveChangesAsync();
         }
 
+
         public async Task DeleteEquipmentAsync(EquipmentModel equipment)
         {
             _context.Equipments.Remove(equipment);
@@ -90,16 +93,37 @@ namespace CompanyAPI.Repository.Equipment
             return await _context.Equipments.Where(e => e.AreaId == areaId).ToListAsync();
         }
 
-        public async Task<bool> CheckEquipmentExistByIdAsync(int equipmentId)
+        public async Task<List<EquipmentModel>> GetAllEquipmentsInBranch(int branchId)
         {
-            return await _context.Equipments.AnyAsync(e => e.Id == equipmentId);
+            return await _context.Areas
+                .Where(x => x.BranchId == branchId)
+                .SelectMany(a => a.Equipments)
+                .ToListAsync();
+        }
+
+        public async Task<List<EquipmentModel>> GetAllEquipmentsInCompany(int Company)
+        {
+            return await _context.Branchs
+                .Where(x => x.CompanyID == Company)
+                .SelectMany(a => a.Equipments)
+                .ToListAsync();
         }
 
         public async Task<EquipmentModel> GetAllDetailsAboutEquipmentAsync(int equipmentId)
         {
             return await _context.Equipments
+                .Include(e => e.Id)
+                .Include(e => e.Name)
+                .Include(e => e.AreaId)
                 .Include(e => e.AreaLinked)
+                .Include(e => e.Price)               
                 .FirstOrDefaultAsync(e => e.Id == equipmentId);
+        }
+
+
+        public async Task<bool> CheckEquipmentExistByIdAsync(int equipmentId)
+        {
+            return await _context.Equipments.AnyAsync(e => e.Id == equipmentId);
         }
 
         public async Task<bool> CheckAreaExistByIdAsync(int areaId)

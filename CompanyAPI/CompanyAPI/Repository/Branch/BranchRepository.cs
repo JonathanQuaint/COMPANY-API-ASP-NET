@@ -27,6 +27,7 @@ namespace CompanyAPI.Repository.Branch
             {
                 branch.CompanyLinked = companyLinked;
                 companyLinked.Branch.Add(branch);
+             
             }
 
 
@@ -102,14 +103,28 @@ namespace CompanyAPI.Repository.Branch
             return await _context.Branchs.Where(b => b.CompanyID == companyId).ToListAsync();
         }
 
-        public async Task<bool> CheckBranchExistByHeadOfficeAsync(string name)
+        public async Task<double> CalculateAllExpenseInBranch(int branchId)
         {
-            return await _context.Branchs.AnyAsync(b => b.HeadOffice == name);
-        }
+            // Calculate total expense for the branch
+            double totalExpense = await _context.Branchs
+                .Where(a => a.Id == branchId)
+                .SelectMany(a => a.Areas)
+                .SumAsync(a => a.Expense);
 
-        public async Task<bool> CheckBranchExistByIdAsync(int branchId)
-        {
-            return await _context.Branchs.AnyAsync(b => b.Id == branchId);
+            // Find the branch by its ID
+            var branch = await _context.Branchs.FindAsync(branchId);
+
+            if (branch != null)
+            {
+                // Update the Expense property
+                branch.Expense = totalExpense;
+
+                // Save the changes to the database
+                _context.Branchs.Update(branch);
+                await _context.SaveChangesAsync();
+            }
+
+            return totalExpense;
         }
 
         public async Task<BranchModel> GetAllDetailsAboutBranchAsync(int branchId)
@@ -122,33 +137,26 @@ namespace CompanyAPI.Repository.Branch
                 .FirstOrDefaultAsync(b => b.Id == branchId);
         }
 
+        public async Task<bool> CheckBranchExistByHeadOfficeAsync(string name)
+        {
+            return await _context.Branchs.AnyAsync(b => b.HeadOffice == name);
+        }
+
+        public async Task<bool> CheckBranchExistByIdAsync(int branchId)
+        {
+            return await _context.Branchs.AnyAsync(b => b.Id == branchId);
+        }
+
+      
+
         public async Task<bool> CheckCompanyExistByIdAsync(int companyId)
         {
             return await _context.Company.AnyAsync(c => c.Id == companyId);
         }
 
-        public async Task<List<BranchModel>> GetAllEmployeesInBranch(int branchId)
-        {
-            return await _context.Branchs
-                .Include(b => b.Employees)
-                .Where(b => b.Id == branchId)
-                .ToListAsync();
-        }
+      
+    
 
-        public async Task<List<BranchModel>> GetAllAreasInBranch(int branchId)
-        {
-            return await _context.Branchs
-                .Include(b => b.Areas)
-                .Where(b => b.Id == branchId)
-                .ToListAsync();
-        }
-
-        public async Task<List<BranchModel>> GetAllEquipmentsInBranch(int branchId)
-        {
-            return await _context.Branchs
-                .Include(b => b.Equipments)
-                .Where(b => b.Id == branchId)
-                .ToListAsync();
-        }
+    
     }
 }

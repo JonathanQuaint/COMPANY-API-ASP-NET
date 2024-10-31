@@ -14,6 +14,7 @@ namespace CompanyAPI.Repository.Branch
         Task<bool> CheckBranchExistByHeadOfficeAsync(string branchHeadOffice);
         Task<bool> CheckBranchExistByIdAsync(int branchId);
         Task<BranchModel> GetAllDetailsAboutBranchAsync(int branchId);
-        Task<List<AreaModel>> GetAllEmployeesInArea(int areaId)
+        Task<double> CalculateAllExpenseInBranch(int branchId);
+
     }
 }

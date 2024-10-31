@@ -11,6 +11,7 @@ public interface IEquipmentRepository
         Task<List<EquipmentModel>> GetEquipmentsInAreaAsync(int areaId);
         Task<bool> CheckEquipmentExistByIdAsync(int equipmentId);
         Task<EquipmentModel> GetAllDetailsAboutEquipmentAsync(int equipmentId);
+    Task<List<EquipmentModel>> GetAllEquipmentsInCompany(int Company);
     }
 
 

@@ -26,6 +26,8 @@ namespace CompanyAPI.Repository.Employee
             {
                 employee.AreaLinked = areaLinked;
                 areaLinked.Employees.Add(employee);
+                areaLinked.LinkedBranch.Employees.Add(employee);
+                areaLinked.Expense += employee.Salary;
             }
 
             await _context.Employees.AddAsync(employee);
@@ -88,6 +90,23 @@ namespace CompanyAPI.Repository.Employee
             return await _context.Employees.Where(e => e.AreaId == areaId).ToListAsync();
         }
 
+        public async Task<List<EmployeeModel>> GetAllEmployeesInBranch(int branchId)
+        {
+            return await _context.Branchs
+                .Where(b => b.Id == branchId)
+                .SelectMany(b => b.Employees)
+                .ToListAsync();
+        }
+
+        public async Task<List<EmployeeModel>> GetAllEmployeesInCompany(int companyId)
+        {
+            return await _context.Branchs
+                 .Where(b => b.Id == companyId)
+                .SelectMany(b => b.Employees)
+                .ToListAsync();
+        }
+
+
         public async Task<bool> CheckEmployeeExistByIdAsync(int employeeId)
         {
             return await _context.Employees.AnyAsync(e => e.Id == employeeId);
@@ -97,6 +116,8 @@ namespace CompanyAPI.Repository.Employee
         {
             return await _context.Employees
                 .Include(e => e.AreaLinked)
+                .Include(e => e.Salary)
+
                 .FirstOrDefaultAsync(e => e.Id == employeeId);
         }
 

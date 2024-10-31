@@ -12,5 +12,6 @@ namespace CompanyAPI.Repository.Employee
         Task<List<EmployeeModel>> GetEmployeesInAreaAsync(int areaId);
         Task<bool> CheckEmployeeExistByIdAsync(int employeeId);
         Task<EmployeeModel> GetAllDetailsAboutEmployeeAsync(int employeeId);
+        Task<List<EmployeeModel>> GetAllEmployeesInCompany(int companyId);
     }
 }

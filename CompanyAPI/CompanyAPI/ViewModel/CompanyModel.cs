@@ -11,8 +11,10 @@ namespace CompanyAPI.ViewModel
         [DisplayFormat(DataFormatString = "{0:F2}")]
         public double MonthlyBilling { get; set; }
 
+
+        [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:F2}")]
-        public double Expense { get; set; } = 0;
+        public double Expense { get; set; }
 
 
         public ICollection<BranchModel> Branch { get; set; } = new List<BranchModel>();

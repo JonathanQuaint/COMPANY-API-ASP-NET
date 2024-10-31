@@ -10,6 +10,7 @@ namespace CompanyAPI.Repository.Company
     {
         private readonly AppDbContext _context;
 
+
         public CompanyRepository(AppDbContext context)
         {
             _context = context;
@@ -151,5 +152,31 @@ namespace CompanyAPI.Repository.Company
                 .GroupBy(x => x.Branch, x => x.Area)
                 .ToListAsync();
         }
+        public async Task<double> CalculateAllExpensesInCompanyAsync(int companyId)
+        {
+            var totalExpenseInAllBranch = await _context.Branchs
+                .Where(a => a.CompanyID == companyId)
+                .SelectMany(a => a.Areas)
+                .SumAsync(a => a.Expense);
+
+
+
+            var company = await _context.Company.FindAsync(companyId);
+
+            if (company != null)
+            {
+                // Update the Expense property
+                company.Expense = totalExpenseInAllBranch;
+
+                // Save the changes to the database
+                _context.Company.Update(company);
+                await _context.SaveChangesAsync();
+            }
+
+            return totalExpenseInAllBranch;
+        }
     }
+
 }
+
+

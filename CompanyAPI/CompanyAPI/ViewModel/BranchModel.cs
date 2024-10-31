@@ -12,6 +12,7 @@ namespace CompanyAPI.ViewModel
 
         public CompanyModel CompanyLinked { get; set; }
 
+        [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:F2}")]
         public double Expense { get; set; }
 

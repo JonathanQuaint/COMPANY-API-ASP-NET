@@ -140,47 +140,18 @@ namespace CompanyAPI.Services.Company
             }
         }
 
-        public async Task<ResponseModel<List<EmployeeModel>>> ListAllEmployeesInCompany(int companyId)
+       
+
+     
+
+        public async Task<ResponseModel<List<IGrouping<BranchModel, AreaModel>>>> ListAllInCompany(int companyId)
         {
-            ResponseModel<List<EmployeeModel>> reply = new();
+            ResponseModel<List<IGrouping<BranchModel, AreaModel>>> reply = new();
             try
             {
-                reply.Dados = await _companyRepository.GetAllEmployeesInCompany(companyId);
-                reply.Mensagem = "Employees successfully retrieved";
-                return reply;
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new DbUpdateException($"Error retrieving employees: {ex.Message}");
-            }
-        }
+                
 
-        public async Task<ResponseModel<List<EquipmentModel>>> ListAllEquipmentsInCompany(int companyId)
-        {
-            ResponseModel<List<EquipmentModel>> reply = new();
-            try
-            {
-                reply.Dados = await _companyRepository.GetAllEquipmentsInCompany(companyId);
-                reply.Mensagem = "Equipments successfully retrieved";
-                return reply;
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new DbUpdateException($"Error retrieving equipments: {ex.Message}");
-            }
-        }
-
-        public async Task<ResponseModel<List<object>>> ListAllInCompany(int companyId)
-        {
-            ResponseModel<List<object>> reply = new();
-            try
-            {
-                var branches = await _companyRepository.GetbranchsInCompanyAsync(companyId);
-                var areas = await _companyRepository.GetAllAreasInCompany(companyId);
-                var employees = await _companyRepository.GetAllEmployeesInCompany(companyId);
-                var equipments = await _companyRepository.GetAllEquipmentsInCompany(companyId);
-
-                reply.Dados = await _companyRepository.getA
+                reply.Dados = await _companyRepository.GetAllInCompanyAsync(companyId);
                 reply.Mensagem = "All data successfully retrieved";
                 return reply;
             }
@@ -190,12 +161,12 @@ namespace CompanyAPI.Services.Company
             }
         }
 
-        public async Task<ResponseModel<List<CompanyModel>>> ListExpenseInCompany()
+        public async Task<ResponseModel<double>> ExpenseInCompany(int companyId)
         {
-            ResponseModel<List<CompanyModel>> reply = new();
+            ResponseModel<double> reply = new();
             try
             {
-                reply.Dados = await _companyRepository.GetCompaniesWithExpensesAsync();
+                reply.Dados = await _companyRepository.CalculateAllExpensesInCompanyAsync(companyId);
                 reply.Mensagem = "Expenses successfully retrieved";
                 return reply;
             }

@@ -79,30 +79,31 @@ namespace CompanyAPI.Repository.Area
             return await _context.Areas.ToListAsync();
         }
 
+        public async Task<double> GetExpenseInArea(int areaId)
+        {
+            return await _context.Areas.Where(a => a.Id == areaId).Select(a => a.Expense).FirstOrDefaultAsync();
+        }
+
         public async Task<AreaModel> GetAreaByIdAsync(int areaId)
         {
             return await _context.Areas.FindAsync(areaId);
         }
 
-        public async Task<AreaModel> GetAreaByBranchAsync(int branchId)
-        {
-            return await _context.Areas.FirstOrDefaultAsync(a => a.BranchId == branchId);
-        }
-
+       
         public async Task<List<AreaModel>> GetAreasInBranchAsync(int branchId)
         {
             return await _context.Areas.Where(a => a.BranchId == branchId).ToListAsync();
         }
 
-        public async Task<bool> CheckAreaExistByIdAsync(int areaId)
-        {
-            return await _context.Areas.AnyAsync(a => a.Id == areaId);
-        }
-
+       
 
         public async Task<AreaModel> GetAllDetailsAboutAreaAsync(int areaId)
         {
             return await _context.Areas
+                .Include(a => a.Id)
+                .Include(a => a.BranchId)
+                .Include(a => a.LinkedBranch)
+                .Include(a => a.Expense)
                 .Include(a => a.Employees)
                 .Include(a => a.Equipments)
                 .FirstOrDefaultAsync(a => a.Id == areaId);
@@ -113,22 +114,10 @@ namespace CompanyAPI.Repository.Area
             return await _context.Branchs.AnyAsync(c => c.Id == Branch);
         }
 
-        public async Task<List<AreaModel>> GetAllEmployeesInArea(int areaId)
+        public async Task<bool> CheckAreaExistByIdAsync(int areaId)
         {
-            return await _context.Areas
-                .Include(a => a.Employees)
-                .Where(a => a.Id == areaId)
-                .ToListAsync();
-
+            return await _context.Areas.AnyAsync(a => a.Id == areaId);
         }
 
-        public async Task<List<AreaModel>> GetAllEquipmentsInArea(int areaId)
-        {
-            return await _context.Areas
-                .Include(a => a.Equipments)
-                .Where(a => a.Id == areaId)
-                .ToListAsync();
-
-        }
     }
 }
