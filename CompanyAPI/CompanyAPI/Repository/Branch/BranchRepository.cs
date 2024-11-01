@@ -107,9 +107,10 @@ namespace CompanyAPI.Repository.Branch
         {
             // Calculate total expense for the branch
             double totalExpense = await _context.Branchs
-                .Where(a => a.Id == branchId)
-                .SelectMany(a => a.Areas)
-                .SumAsync(a => a.Expense);
+                .Where(x => x.Id == branchId)
+                .Select(x => x.Expense)
+                .FirstOrDefaultAsync();
+        
 
             // Find the branch by its ID
             var branch = await _context.Branchs.FindAsync(branchId);
@@ -123,7 +124,7 @@ namespace CompanyAPI.Repository.Branch
                 _context.Branchs.Update(branch);
                 await _context.SaveChangesAsync();
             }
-
+            
             return totalExpense;
         }
 

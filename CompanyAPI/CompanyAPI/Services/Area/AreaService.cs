@@ -1,28 +1,188 @@
 ﻿using CompanyAPI.Data;
 using CompanyAPI.Dto.AreaDTOS;
+using CompanyAPI.Repository.Area;
+using CompanyAPI.Services.Exceptions;
 using CompanyAPI.ViewModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompanyAPI.Services.Area
 {
     public class AreaService : IAreaInterface
     {
-        private readonly AppDbContext _context;
+        private readonly IAreaRepository _areaRepository;
 
-        public Task<ResponseModel<List<AreaModel>>> CreateArea(CreateAreaDto areaDto)
+        public AreaService(IAreaRepository areaRepository)
         {
-            throw new NotImplementedException();
+            _areaRepository = areaRepository;
         }
 
-        public Task<ResponseModel<AreaModel>> InformationsAboutArea(int areaId)
+        public async Task<ResponseModel<List<AreaModel>>> CreateArea(CreateAreaDto areaDto)
         {
-            throw new NotImplementedException();
+            ResponseModel<List<AreaModel>> reply = new();
+
+            try
+            {
+               
+                var area = new AreaModel
+                {
+                    NameArea = areaDto.NameArea,
+                    BranchId = areaDto.BranchLinkedId
+                };
+
+                await _areaRepository.AddAreaAsync(area);
+
+                reply.Dados = await _areaRepository.GetAllAreasAsync();
+                reply.Mensagem = "Area successfully created";
+
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error creating area: {ex.Message}");
+            }
         }
 
-        public Task<ResponseModel<List<AreaModel>>> UpdateArea(EditAreaDto areaDto)
+        public async Task<ResponseModel<AreaModel>> InformationsAboutArea(int areaId)
         {
-            throw new NotImplementedException();
+            ResponseModel<AreaModel> reply = new();
+            try
+            {
+                bool areaExist = await _areaRepository.CheckAreaExistByIdAsync(areaId);
+
+                if (!areaExist)
+                {
+                    throw new NotFoundException("Area not found");
+                }
+
+                reply.Dados = await _areaRepository.GetAllDetailsAboutAreaAsync(areaId);
+                reply.Mensagem = "Area information successfully retrieved";
+
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving area information: {ex.Message}");
+            }
         }
 
-        
+        public async Task<ResponseModel<List<AreaModel>>> UpdateArea(EditAreaDto areaDto)
+        {
+            ResponseModel<List<AreaModel>> reply = new();
+
+            bool areaExist = await _areaRepository.CheckAreaExistByIdAsync(areaDto.Id);
+
+            if (!areaExist)
+            {
+                throw new NotFoundException("Area not found");
+            }
+
+            try
+            {
+                var area = await _areaRepository.GetAreaByIdAsync(areaDto.Id);
+
+                area.NameArea = areaDto.NameArea;
+                area.BranchId = areaDto.BranchLinkedId;
+
+                await _areaRepository.UpdateAreaAsync(area);
+
+                reply.Dados = await _areaRepository.GetAllAreasAsync();
+                reply.Mensagem = "Area successfully updated";
+
+                return reply;
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbUpdateException($"Error updating area: {e.Message}");
+            }
+        }
+
+        public async Task<ResponseModel<List<AreaModel>>> DeleteArea(int areaId)
+        {
+            ResponseModel<List<AreaModel>> reply = new();
+
+            bool areaExist = await _areaRepository.CheckAreaExistByIdAsync(areaId);
+
+            if (!areaExist)
+            {
+                throw new NotFoundException("Area not found");
+            }
+
+            try
+            {
+                var area = await _areaRepository.GetAreaByIdAsync(areaId);
+
+                await _areaRepository.DeleteAreaAsync(area);
+
+                reply.Dados = await _areaRepository.GetAllAreasAsync();
+                reply.Mensagem = "Area successfully deleted";
+
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error deleting area: {ex.Message}");
+            }
+        }
+
+        public async Task<ResponseModel<List<AreaModel>>> ListAllAreas()
+        {
+            ResponseModel<List<AreaModel>> reply = new();
+            try
+            {
+                reply.Dados = await _areaRepository.GetAllAreasAsync();
+                reply.Mensagem = "All areas successfully retrieved";
+
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving all areas: {ex.Message}");
+            }
+        }
+
+      
+        public async Task<ResponseModel<List<AreaModel>>> GetAreasInBranch(int branchId)
+        {
+            ResponseModel<List<AreaModel>> reply = new();
+            try
+            {
+                bool branchExist = await _areaRepository.CheckBranchExistByIdAsync(branchId);
+                if (!branchExist)
+                {
+                    throw new NotFoundException("Branch not found");
+                }
+
+                reply.Dados = await _areaRepository.GetAreasInBranchAsync(branchId);
+                reply.Mensagem = "Areas in branch successfully retrieved";
+
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving areas in branch: {ex.Message}");
+            }
+        }
+
+        public async Task<ResponseModel<double>> GetExpenseInArea(int areaId)
+        {
+            ResponseModel<double> reply = new();
+            try
+            {
+                bool areaExist = await _areaRepository.CheckAreaExistByIdAsync(areaId);
+                if (!areaExist)
+                {
+                    throw new NotFoundException("Area not found");
+                }
+
+                reply.Dados = await _areaRepository.GetExpenseInArea(areaId);
+                reply.Mensagem = "Expense in area successfully retrieved";
+
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving expense in area: {ex.Message}");
+            }
+        }
     }
 }

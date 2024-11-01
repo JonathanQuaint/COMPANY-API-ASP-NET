@@ -27,7 +27,7 @@ namespace CompanyAPI.Repository.Employee
                 employee.AreaLinked = areaLinked;
                 areaLinked.Employees.Add(employee);
                 areaLinked.LinkedBranch.Employees.Add(employee);
-                areaLinked.Expense += employee.Salary;
+              
             }
 
             await _context.Employees.AddAsync(employee);
@@ -36,38 +36,37 @@ namespace CompanyAPI.Repository.Employee
 
         public async Task UpdateEmployeeAsync(EmployeeModel employee)
         {
-            if (!await CheckAreaExistByIdAsync(employee.AreaId))
+            var employeeExist = await _context.Employees.FindAsync(employee.Id);
+
+            if (employeeExist == null)
             {
-                throw new NotFoundException("Id of the area not found");
+                throw new NotFoundException("Employee not found");
             }
 
-            if (employee.AreaLinked == null)
+            if (employeeExist.AreaId != employee.AreaId)
             {
-                throw new InvalidOperationException("AreaLinked property cannot be null");
-            }
+                var newArea = await _context.Areas.Include(x => x.LinkedBranch).FirstOrDefaultAsync(a => a.Id == employee.AreaLinked.Id);
 
-            bool areaIsSimilar = employee.AreaId == employee.AreaLinked.Id;
-
-            if (!areaIsSimilar)
-            {
-                var currentArea = await _context.Areas.FindAsync(employee.AreaLinked.Id);
-                if (currentArea == null)
+                if (newArea == null)
                 {
                     throw new NotFoundException("Current linked area not found");
                 }
 
-                currentArea.Employees.Remove(employee);
+                employeeExist.AreaLinked.Employees.Remove(employeeExist);
+                employeeExist.AreaLinked.LinkedBranch.Employees.Remove(employeeExist);
 
-                employee.AreaLinked = await _context.Areas.FindAsync(employee.AreaId);
-                if (employee.AreaLinked == null)
-                {
-                    throw new NotFoundException("New linked area not found");
-                }
+                newArea.Employees.Add(employeeExist);
+                newArea.LinkedBranch.Employees.Add(employeeExist);
+
+                employeeExist.AreaLinked = newArea;
+                employeeExist.AreaId = newArea.Id;
             }
 
-            _context.Employees.Update(employee);
+            _context.Employees.Update(employeeExist);
             await _context.SaveChangesAsync();
         }
+
+        
 
         public async Task DeleteEmployeeAsync(EmployeeModel employee)
         {

@@ -38,43 +38,49 @@ namespace CompanyAPI.Repository.Equipment
 
         public async Task UpdateEquipmentAsync(EquipmentModel equipment)
         {
-            if (!await CheckAreaExistByIdAsync(equipment.AreaId))
+            var equipmentExist = await _context.Equipments.FindAsync(equipment.Id);
+
+            if (equipmentExist == null)
             {
-                throw new NotFoundException("Id of the area not found");
+                throw new NotFoundException("Equipment not found");
             }
 
-            if (equipment.AreaLinked == null)
+            if (equipmentExist.AreaId != equipment.AreaId)
             {
-                throw new InvalidOperationException("AreaLinked property cannot be null");
-            }
+                var newArea = await _context.Areas.Include(x => x.LinkedBranch).FirstOrDefaultAsync(a => a.Id == equipment.AreaLinked.Id);
 
-            bool areaIsSimilar = equipment.AreaId == equipment.AreaLinked.Id;
-
-            if (!areaIsSimilar)
-            {
-                var currentArea = await _context.Areas.FindAsync(equipment.AreaLinked.Id);
-                if (currentArea == null)
+                if (newArea == null)
                 {
                     throw new NotFoundException("Current linked area not found");
                 }
 
-                currentArea.Equipments.Remove(equipment);
+                equipmentExist.AreaLinked.Equipments.Remove(equipmentExist);
+                equipmentExist.AreaLinked.LinkedBranch.Equipments.Remove(equipmentExist);
 
-                equipment.AreaLinked = await _context.Areas.FindAsync(equipment.AreaId);
-                if (equipment.AreaLinked == null)
-                {
-                    throw new NotFoundException("New linked area not found");
-                }
+                newArea.Equipments.Add(equipmentExist);
+                newArea.LinkedBranch.Equipments.Add(equipmentExist);
+
+                equipmentExist.AreaLinked = newArea;
+                equipmentExist.AreaId = newArea.Id;
             }
 
-            _context.Equipments.Update(equipment);
+            _context.Equipments.Update(equipmentExist);
             await _context.SaveChangesAsync();
         }
 
-
         public async Task DeleteEquipmentAsync(EquipmentModel equipment)
         {
-            _context.Equipments.Remove(equipment);
+            var equipmentExist = await _context.Equipments.Include(e => e.AreaLinked).ThenInclude(e => e.LinkedBranch).FirstOrDefaultAsync(e => e.Id == equipment.Id);
+
+            if (equipmentExist == null)
+            {
+                throw new NotFoundException("Equipment not found");
+            }
+
+            equipmentExist.AreaLinked.Expense -= equipmentExist.Price;
+            equipmentExist.AreaLinked.LinkedBranch.Expense -= equipmentExist.Price;
+
+            _context.Equipments.Remove(equipmentExist);
             await _context.SaveChangesAsync();
         }
 
@@ -83,7 +89,7 @@ namespace CompanyAPI.Repository.Equipment
             return await _context.Equipments.ToListAsync();
         }
 
-        public async Task<EquipmentModel> GetEquipmentByIdAsync(int equipmentId)
+        public async Task<EquipmentModel?> GetEquipmentByIdAsync(int equipmentId)
         {
             return await _context.Equipments.FindAsync(equipmentId);
         }
@@ -109,17 +115,16 @@ namespace CompanyAPI.Repository.Equipment
                 .ToListAsync();
         }
 
-        public async Task<EquipmentModel> GetAllDetailsAboutEquipmentAsync(int equipmentId)
+        public async Task<EquipmentModel?> GetAllDetailsAboutEquipmentAsync(int equipmentId)
         {
             return await _context.Equipments
                 .Include(e => e.Id)
                 .Include(e => e.Name)
                 .Include(e => e.AreaId)
                 .Include(e => e.AreaLinked)
-                .Include(e => e.Price)               
+                .Include(e => e.Price)
                 .FirstOrDefaultAsync(e => e.Id == equipmentId);
         }
-
 
         public async Task<bool> CheckEquipmentExistByIdAsync(int equipmentId)
         {

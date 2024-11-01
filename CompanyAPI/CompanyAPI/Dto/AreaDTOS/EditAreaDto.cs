@@ -2,7 +2,7 @@
 {
     public class EditAreaDto 
     {
-        public int IdBranch { get; set; }
+        public int Id { get; set; }
 
         public string NameArea { get; set; }
 

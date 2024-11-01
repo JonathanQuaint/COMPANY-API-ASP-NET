@@ -6,6 +6,12 @@ using System.Text.Json;
 using System.Linq;
 using CompanyAPI.Repository.Branch;
 using CompanyAPI.Repository.Company;
+using CompanyAPI.Repository.Area;
+using CompanyAPI.Services.Area;
+using CompanyAPI.Repository.Equipment;
+using CompanyAPI.Services.Equipment;
+using CompanyAPI.Services.Employee;
+using CompanyAPI.Repository.Employee;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +36,12 @@ builder.Services.AddScoped<IBranchService, BranchService>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IBranchRepository, BranchRepository>();
 builder.Services.AddScoped<ICompanyInterface, CompanyService>();
-builder.Services.AddScoped<IBranchService, BranchService>();
+builder.Services.AddScoped<IAreaRepository, AreaRepository>();
+builder.Services.AddScoped<IAreaInterface, AreaService>();
+builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+builder.Services.AddScoped<IEquipmentInterface, EquipmentService>();
+builder.Services.AddScoped<IEmployeeInterface, EmployeeService>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

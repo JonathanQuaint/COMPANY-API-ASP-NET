@@ -33,7 +33,7 @@ namespace CompanyAPI.Repository.Company
             return await _context.Company.ToListAsync();
         }
 
-        public async Task<List<CompanyModel>> GetbranchsInCompanyAsync(int companyId)
+        public async Task<List<BranchModel>> GetbranchsInCompanyAsync(int companyId)
         {
             bool branchsExist = await _context.Branchs.AnyAsync(x => x.CompanyID == companyId);
 
@@ -43,9 +43,8 @@ namespace CompanyAPI.Repository.Company
             }
 
 
-            return await _context.Company
-                .Include(c => c.Branch)
-                .Where(c => c.Id == companyId)
+            return await _context.Branchs
+                .Where(c => c.CompanyLinked.Id == companyId)
                 .ToListAsync();
         }
 
@@ -159,19 +158,19 @@ namespace CompanyAPI.Repository.Company
                 .SelectMany(a => a.Areas)
                 .SumAsync(a => a.Expense);
 
-
-
             var company = await _context.Company.FindAsync(companyId);
 
-            if (company != null)
+            if (company == null)
             {
-                // Update the Expense property
-                company.Expense = totalExpenseInAllBranch;
-
-                // Save the changes to the database
-                _context.Company.Update(company);
-                await _context.SaveChangesAsync();
+                throw new NotFoundException("Company not found");
             }
+
+            // Update the Expense property
+            company.Expense = totalExpenseInAllBranch;
+
+            // Save the changes to the database
+            _context.Company.Update(company);
+            await _context.SaveChangesAsync();
 
             return totalExpenseInAllBranch;
         }

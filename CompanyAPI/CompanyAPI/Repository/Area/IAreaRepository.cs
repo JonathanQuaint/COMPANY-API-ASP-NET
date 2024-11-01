@@ -13,9 +13,6 @@ namespace CompanyAPI.Repository.Area
         Task<bool> CheckAreaExistByIdAsync(int areaId);
         Task<AreaModel> GetAllDetailsAboutAreaAsync(int areaId);
         Task<bool> CheckBranchExistByIdAsync(int Branch);
-       
-
-
-
+        Task<double> GetExpenseInArea(int areaId); 
     }
 }

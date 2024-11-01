@@ -16,18 +16,14 @@ namespace CompanyAPI.Repository.Area
 
         public async Task AddAreaAsync(AreaModel area)
         {
-            if (!await CheckBranchExistByIdAsync(area.BranchId))
+            var branchLinked = await _context.Branchs.FindAsync(area.BranchId);
+            if (branchLinked == null)
             {
                 throw new NotFoundException("Id of the branch not found");
             }
-            var branchLinked = await _context.Branchs.FindAsync(area.BranchId);
 
-            if (branchLinked != null)
-            {
-                area.LinkedBranch = branchLinked;
-                branchLinked.Areas.Add(area);
-            }
-
+            area.LinkedBranch = branchLinked;
+            branchLinked.Areas.Add(area);
 
             await _context.Areas.AddAsync(area);
             await _context.SaveChangesAsync();
@@ -118,6 +114,8 @@ namespace CompanyAPI.Repository.Area
         {
             return await _context.Areas.AnyAsync(a => a.Id == areaId);
         }
+
+       
 
     }
 }

@@ -40,7 +40,7 @@ namespace CompanyAPI.Services.Branch
 
 
                 await _branchRepository.AddBranchAsync(Branch);
-               
+
                 reply.Dados = await _branchRepository.GetBranchesInCompanyAsync(Branch.Id);
                 reply.Mensagem = "successfully registered branch";
 
@@ -60,7 +60,7 @@ namespace CompanyAPI.Services.Branch
             try
             {
                 bool branchExists = await _branchRepository.CheckBranchExistByIdAsync(branchDto.IdBranch);
-           
+
 
                 if (!branchExists)
                 {
@@ -110,16 +110,38 @@ namespace CompanyAPI.Services.Branch
 
             }
 
-         
         }
+            public async Task<ResponseModel<bool>> DeleteFilial(int branchId)
+            {
+                ResponseModel<bool> reply = new ResponseModel<bool>();
+
+                try
+                {
+                    var branch = await _branchRepository.GetBranchByIdAsync(branchId);
+                    if (branch == null)
+                    {
+                        throw new NotFoundException("Branch not found");
+                    }
+
+                    await _branchRepository.DeleteBranchAsync(branch);
+
+                    reply.Dados = true;
+                    reply.Mensagem = "Branch deleted successfully";
+                    return reply;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Error deleting Branch: {ex.Message}");
+                }
+            }
+        }
+
+
+
+
+
+
     }
-
-
-
-
-
-
-}
 
 
 

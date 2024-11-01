@@ -93,7 +93,7 @@ namespace CompanyAPI.Services.Company
                 }
 
                 reply.Dados = await _companyRepository.GetAllDetailsAboutCompanyAsync(companyId);
-                reply.Mensagem = "Company information successfully retrieved";
+                reply.Mensagem = "Company informations sucessfully retrived";
 
                 return reply;
             }
@@ -103,12 +103,12 @@ namespace CompanyAPI.Services.Company
             }
         }
 
-        public async Task<ResponseModel<List<AreaModel>>> ListAllAreas()
+        public async Task<ResponseModel<List<AreaModel>>> ListAllAreasInCompany(int company)
         {
             ResponseModel<List<AreaModel>> reply = new();
             try
             {
-                reply.Dados = await _companyRepository.GetAllAreasAsync();
+                reply.Dados = await _companyRepository.GetAllAreasInCompanyAsync(company);
                 reply.Mensagem = "Areas successfully retrieved";
                 return reply;
             }
@@ -130,7 +130,7 @@ namespace CompanyAPI.Services.Company
                     throw new NotFoundException("Company not found");
                 }
 
-                reply.Dados = await _companyRepository.GetBranchesInCompanyAsync(companyId);
+                reply.Dados = await _companyRepository.GetbranchsInCompanyAsync(companyId);
                 reply.Mensagem = "Branches successfully retrieved";
                 return reply;
             }
@@ -174,6 +174,36 @@ namespace CompanyAPI.Services.Company
             {
                 throw new DbUpdateException($"Error retrieving expenses: {ex.Message}");
             }
+        }
+
+        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListAllBranchsInCompany(int companyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListExpenseInCompany()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListAllAreas()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListAllEmployees()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListAllEquipments()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListAllInCompany()
+        {
+            throw new NotImplementedException();
         }
     }
 }

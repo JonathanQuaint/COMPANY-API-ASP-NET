@@ -9,12 +9,12 @@ namespace CompanyAPI.Repository.Branch
         Task DeleteBranchAsync(BranchModel branch);
         Task<List<BranchModel>> GetAllBranchesAsync();
         Task<BranchModel> GetBranchByIdAsync(int branchId);
-        Task<BranchModel> GetBranchByHeadOfficeAsync(string brancHeadOffice);
+        Task<BranchModel> GetBranchByHeadOfficeAsync(string branchHeadOffice);
         Task<List<BranchModel>> GetBranchesInCompanyAsync(int companyId);
         Task<bool> CheckBranchExistByHeadOfficeAsync(string branchHeadOffice);
         Task<bool> CheckBranchExistByIdAsync(int branchId);
         Task<BranchModel> GetAllDetailsAboutBranchAsync(int branchId);
-        Task<double> CalculateAllExpenseInBranch(int branchId);
-
+        Task<double> CalculateAllExpenseInBranch(int branchId); 
+        Task<bool> CheckCompanyExistByIdAsync(int companyId); 
     }
 }

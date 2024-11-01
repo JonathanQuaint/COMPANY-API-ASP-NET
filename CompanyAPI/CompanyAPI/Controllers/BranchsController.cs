@@ -14,45 +14,42 @@ namespace CompanyAPI.Controllers
     public class BranchsController : ControllerBase
     {
         private readonly IBranchService _branchService;
-        private readonly AppDbContext _context;
 
         public BranchsController(IBranchService branchService)
         {
             _branchService = branchService;
         }
 
-
-
         // POST: Create the Branch 
         [HttpPost("CreateFilial")]
-        public async Task<ActionResult<ResponseModel<List<BranchModel>>>> CreateFilial(CreateBranchDto branchInfos)
+        public async Task<ActionResult<ResponseModel<List<BranchModel>>>> CreateFilial([FromBody] CreateBranchDto branchInfos)
         {
             var branch = await _branchService.CreateFilial(branchInfos);
-
             return Ok(branch);
-
         }
 
-        // POST: Edit Branch Details 
-        [HttpPost("EditFilial")]
-        public async Task<ActionResult<ResponseModel<List<BranchModel>>>> EditCompany(EditBranchDto branchInfos)
+        // PUT: Edit Branch Details 
+        [HttpPut("EditFilial")]
+        public async Task<ActionResult<ResponseModel<List<BranchModel>>>> EditCompany([FromBody] EditBranchDto branchInfos)
         {
             var branch = await _branchService.UpdateFilial(branchInfos);
-
             return Ok(branch);
-
         }
 
-
-        //GET:  Filial Details 
+        // GET: Filial Details 
         [HttpGet("FilialDetails")]
-        public async Task<ActionResult<ResponseModel<BranchModel>>> DetailsFilial(int branchID)
+        public async Task<ActionResult<ResponseModel<BranchModel>>> DetailsFilial([FromQuery] int branchID)
         {
             var branch = await _branchService.InformationsAboutBranch(branchID);
-
             return Ok(branch);
-
         }
 
+        // DELETE: Delete Branch
+        [HttpDelete("DeleteFilial/{branchID}")]
+        public async Task<ActionResult<ResponseModel<bool>>> DeleteFilial([FromRoute] int branchID)
+        {
+            var result = await _branchService.DeleteFilial(branchID);
+            return Ok(result);
+        }
     }
 }
