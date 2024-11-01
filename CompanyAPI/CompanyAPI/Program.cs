@@ -4,14 +4,11 @@ using CompanyAPI.Services.Company;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Linq;
-using CompanyAPI.Repository.Branch;
-using CompanyAPI.Repository.Company;
-using CompanyAPI.Repository.Area;
-using CompanyAPI.Services.Area;
-using CompanyAPI.Repository.Equipment;
-using CompanyAPI.Services.Equipment;
-using CompanyAPI.Services.Employee;
-using CompanyAPI.Repository.Employee;
+using CompanyAPI.Extensions;
+using CompanyAPI.ViewModel;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ICompanyInterface, CompanyService>();
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -32,16 +29,9 @@ builder.Services.AddControllers()
     });
 
 
-builder.Services.AddScoped<IBranchService, BranchService>();
-builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-builder.Services.AddScoped<IBranchRepository, BranchRepository>();
-builder.Services.AddScoped<ICompanyInterface, CompanyService>();
-builder.Services.AddScoped<IAreaRepository, AreaRepository>();
-builder.Services.AddScoped<IAreaInterface, AreaService>();
-builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
-builder.Services.AddScoped<IEquipmentInterface, EquipmentService>();
-builder.Services.AddScoped<IEmployeeInterface, EmployeeService>();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+builder.Services.AddExtensionsServices();
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -49,6 +39,41 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 });
 
+builder.Services.AddIdentity<AppUserModel, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 12;
+}).AddEntityFrameworkStores<AppDbContext>();
+
+
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme =
+    options.DefaultChallengeScheme =
+    options.DefaultScheme =
+    options.DefaultSignInScheme =
+    options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JWT:Audience"],
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+         System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"])
+            )
+    };
+
+
+});
 
 builder.Services.AddCors(options =>
 {
@@ -74,6 +99,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
