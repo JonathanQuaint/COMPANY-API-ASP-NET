@@ -13,18 +13,6 @@ namespace CompanyAPI.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "MonthyBilling",
-                table: "Company",
-                newName: "MonthlyBilling");
-
-            migrationBuilder.AddColumn<double>(
-                name: "Salary",
-                table: "Employees",
-                type: "float",
-                nullable: false,
-                defaultValue: 0.0);
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -62,6 +50,21 @@ namespace CompanyAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Companys",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MonthlyBilling = table.Column<double>(type: "float", nullable: false),
+                    Expense = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Companys", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -170,14 +173,127 @@ namespace CompanyAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Branchs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HeadOffice = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CompanyID = table.Column<int>(type: "int", nullable: false),
+                    Expense = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Branchs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Branchs_Companys_CompanyID",
+                        column: x => x.CompanyID,
+                        principalTable: "Companys",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Areas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameArea = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false),
+                    Expense = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Areas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Areas_Branchs_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branchs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AreaId = table.Column<int>(type: "int", nullable: false),
+                    Salary = table.Column<double>(type: "float", nullable: false),
+                    AreaModelId = table.Column<int>(type: "int", nullable: true),
+                    BranchModelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Employees_Areas_AreaId",
+                        column: x => x.AreaId,
+                        principalTable: "Areas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Employees_Areas_AreaModelId",
+                        column: x => x.AreaModelId,
+                        principalTable: "Areas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Employees_Branchs_BranchModelId",
+                        column: x => x.BranchModelId,
+                        principalTable: "Branchs",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Equipments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AreaId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    AreaModelId = table.Column<int>(type: "int", nullable: true),
+                    BranchModelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Equipments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Equipments_Areas_AreaId",
+                        column: x => x.AreaId,
+                        principalTable: "Areas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Equipments_Areas_AreaModelId",
+                        column: x => x.AreaModelId,
+                        principalTable: "Areas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Equipments_Branchs_BranchModelId",
+                        column: x => x.BranchModelId,
+                        principalTable: "Branchs",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "2c59c3cd-b59c-4b24-9ad8-a0cfb49ac469", null, "Admin", "ADMIN" },
-                    { "704f04da-8693-4ded-9a6d-0ceb465cd5b9", null, "User", "USER" }
+                    { "72ecb38d-a00b-4149-96a9-bcd2e45eebb0", null, "Admin", "ADMIN" },
+                    { "c4767900-608d-4b2e-9edd-c05b54d8dbc4", null, "User", "USER" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Areas_BranchId",
+                table: "Areas",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -217,6 +333,41 @@ namespace CompanyAPI.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branchs_CompanyID",
+                table: "Branchs",
+                column: "CompanyID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_AreaId",
+                table: "Employees",
+                column: "AreaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_AreaModelId",
+                table: "Employees",
+                column: "AreaModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_BranchModelId",
+                table: "Employees",
+                column: "BranchModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Equipments_AreaId",
+                table: "Equipments",
+                column: "AreaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Equipments_AreaModelId",
+                table: "Equipments",
+                column: "AreaModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Equipments_BranchModelId",
+                table: "Equipments",
+                column: "BranchModelId");
         }
 
         /// <inheritdoc />
@@ -238,19 +389,25 @@ namespace CompanyAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "Equipments");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "Salary",
-                table: "Employees");
+            migrationBuilder.DropTable(
+                name: "Areas");
 
-            migrationBuilder.RenameColumn(
-                name: "MonthlyBilling",
-                table: "Company",
-                newName: "MonthyBilling");
+            migrationBuilder.DropTable(
+                name: "Branchs");
+
+            migrationBuilder.DropTable(
+                name: "Companys");
         }
     }
 }

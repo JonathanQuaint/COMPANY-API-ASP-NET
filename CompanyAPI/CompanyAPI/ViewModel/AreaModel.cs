@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace CompanyAPI.ViewModel
 {
+    [Table("Areas")]
     public class AreaModel
     {
         public int Id { get; set; }
@@ -15,11 +17,16 @@ namespace CompanyAPI.ViewModel
         [DisplayFormat(DataFormatString = "{0:F2}")]
         public double Expense { get; set; }
 
-        [JsonIgnore]
-        public ICollection<EmployeeModel> Employees { get; set; }
+        public double EmployeesExpense { get; set; }
+
+        public double EquipmentsExpense { get; set; }
 
         [JsonIgnore]
-        public ICollection<EquipmentModel> Equipments { get; set; }
+        public ICollection<EmployeeModel> Employees { get; set; } = new List<EmployeeModel>();
+
+        [JsonIgnore]
+        public ICollection<EquipmentModel> Equipments { get; set; } = new List<EquipmentModel>();
+
 
         public AreaModel()
         {

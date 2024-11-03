@@ -77,7 +77,23 @@ namespace CompanyAPI.Repository.Area
 
         public async Task<double> GetExpenseInArea(int areaId)
         {
-            return await _context.Areas.Where(a => a.Id == areaId).Select(a => a.Expense).FirstOrDefaultAsync();
+
+            var area = await _context.Areas.FindAsync(areaId);
+
+            if (area == null)
+            {
+                throw new NotFoundException("Area not found");
+            }
+
+
+            var TotalCosts = area.EquipmentsExpense + area.EmployeesExpense;
+
+          
+            area.Expense = TotalCosts;
+
+            return TotalCosts;
+
+
         }
 
         public async Task<AreaModel> GetAreaByIdAsync(int areaId)

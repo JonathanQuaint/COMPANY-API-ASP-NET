@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 
 namespace CompanyAPI.Data
 {
-    public class AppDbContext : IdentityDbContext<AppUserModel>
+    public class AppDbContext : IdentityDbContext<IdentityUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -22,42 +22,48 @@ namespace CompanyAPI.Data
 
         public DbSet<EquipmentModel> Equipments { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             List<IdentityRole> roles = new List<IdentityRole>
-            {
-                new IdentityRole
                 {
-                Name = "Admin",
-                NormalizedName = "ADMIN"
-                },
-
-                new IdentityRole
-                {
-                   Name = "User",
-                   NormalizedName = "USER"
-                },
-
-            };
+                    new IdentityRole
+                    {
+                        Name = "Admin",
+                        NormalizedName = "ADMIN"
+                    },
+                    new IdentityRole
+                    {
+                        Name = "User",
+                        NormalizedName = "USER"
+                    },
+                };
             builder.Entity<IdentityRole>().HasData(roles);
-        
 
             builder.Entity<CompanyModel>()
-              .HasMany(c => c.Branch).WithOne(b => b.CompanyLinked).HasForeignKey(b => b.CompanyID)
-              .OnDelete(DeleteBehavior.Cascade);
+                .HasMany(c => c.Branch)
+                .WithOne(b => b.CompanyLinked)
+                .HasForeignKey(b => b.CompanyID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<BranchModel>()
-                .HasMany(c => c.Areas).WithOne(b => b.LinkedBranch).HasForeignKey(a => a.BranchId).OnDelete(DeleteBehavior.Cascade);
+                .HasMany(c => c.Areas)
+                .WithOne(b => b.LinkedBranch)
+                .HasForeignKey(a => a.BranchId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<AreaModel>()
-                 .HasMany<EmployeeModel>().WithOne(b => b.AreaLinked).HasForeignKey(b => b.AreaId).OnDelete(DeleteBehavior.Cascade);
-
+                .HasMany<EmployeeModel>()
+                .WithOne(b => b.AreaLinked)
+                .HasForeignKey(b => b.AreaId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<AreaModel>()
-                .HasMany<EquipmentModel>().WithOne(b => b.AreaLinked).HasForeignKey(b => b.AreaId).OnDelete(DeleteBehavior.Cascade);
+                .HasMany<EquipmentModel>()
+                .WithOne(b => b.AreaLinked)
+                .HasForeignKey(b => b.AreaId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -2,13 +2,15 @@
 using CompanyAPI.Dto.CompanyDTOS;
 using CompanyAPI.Services.Company;
 using CompanyAPI.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 namespace CompanyAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("Company")]
+    [Authorize]
     [ApiController]
     public class CompanyController : ControllerBase
     {
@@ -20,8 +22,10 @@ namespace CompanyAPI.Controllers
             _companyInterface = companyInterface;
         }
 
+        
         // POST: Creating Company 
         [HttpPost("CreateCompany")]
+   
         public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> CreateCompany(CreateCompanyDTO companyCreate)
         {
             var company = await _companyInterface.CreateCompany(companyCreate);

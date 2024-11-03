@@ -167,12 +167,7 @@ namespace CompanyAPI.Services.Area
         {
             ResponseModel<double> reply = new();
             try
-            {
-                bool areaExist = await _areaRepository.CheckAreaExistByIdAsync(areaId);
-                if (!areaExist)
-                {
-                    throw new NotFoundException("Area not found");
-                }
+            {  
 
                 reply.Dados = await _areaRepository.GetExpenseInArea(areaId);
                 reply.Mensagem = "Expense in area successfully retrieved";

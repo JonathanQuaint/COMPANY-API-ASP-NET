@@ -18,25 +18,54 @@ namespace CompanyAPI.Repository.Equipment
 
         public async Task AddEquipmentAsync(EquipmentModel equipment)
         {
+            if (equipment == null)
+            {
+                throw new ArgumentNullException(nameof(equipment), "Equipment cannot be null");
+            }
+
             if (!await CheckAreaExistByIdAsync(equipment.AreaId))
             {
                 throw new NotFoundException("Id of the area not found");
             }
-            var areaLinked = await _context.Areas.FindAsync(equipment.AreaId);
 
-            if (areaLinked != null)
+            var areaLinked = await _context.Areas
+                .Include(a => a.LinkedBranch)
+                .ThenInclude(b => b.Equipments)
+                .FirstOrDefaultAsync(a => a.Id == equipment.AreaId);
+
+            if (areaLinked == null)
             {
-                equipment.AreaLinked = areaLinked;
-                areaLinked.Equipments.Add(equipment);
-                areaLinked.LinkedBranch.Equipments.Add(equipment);
-                areaLinked.Expense += equipment.Price;
+                throw new NotFoundException("Area not found");
             }
+
+            if (areaLinked.LinkedBranch == null)
+            {
+                throw new NotFoundException("Linked branch not found");
+            }
+
+            if (areaLinked.Equipments == null)
+            {
+                areaLinked.Equipments = new List<EquipmentModel>();
+            }
+
+            if (areaLinked.LinkedBranch.Equipments == null)
+            {
+                areaLinked.LinkedBranch.Equipments = new List<EquipmentModel>();
+            }
+
+
+            areaLinked.EquipmentsExpense += equipment.Price;
+            equipment.AreaLinked = areaLinked;
+            areaLinked.Equipments.Add(equipment);
+            areaLinked.LinkedBranch.Equipments.Add(equipment);
 
             await _context.Equipments.AddAsync(equipment);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateEquipmentAsync(EquipmentModel equipment)
+    
+
+    public async Task UpdateEquipmentAsync(EquipmentModel equipment)
         {
             var equipmentExist = await _context.Equipments.FindAsync(equipment.Id);
 

@@ -4,13 +4,15 @@ using CompanyAPI.Services.Company;
 using CompanyAPI.Services.Employee;
 using CompanyAPI.Services.Equipment;
 using CompanyAPI.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CompanyAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("Employees")]
     [ApiController]
     public class EmployeesController : ControllerBase
     {
@@ -24,6 +26,7 @@ namespace CompanyAPI.Controllers
 
         // POST: Create Employee
         [HttpPost("CreateEmployee")]
+        [Authorize]
         public async Task<ActionResult<ResponseModel<List<EmployeeModel>>>> CreateEmployee(CreateEmployeeDto employeeDto)
         {
             var employee = await _employeeInterface.CreateEmployee(employeeDto);

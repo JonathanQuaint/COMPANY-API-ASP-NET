@@ -44,10 +44,12 @@ namespace CompanyAPI.Services.Company
                 return reply;
             }
             catch (DbUpdateException ex)
+                
             {
-                throw new DbUpdateException(ex.Message);
+                throw new DbUpdateException($"Error: {ex.InnerException?.Message}");
             }
         }
+        
 
         public async Task<ResponseModel<List<CompanyModel>>> UpdateCompany(EditCompanyDTOS companyInfos)
         {

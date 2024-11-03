@@ -79,10 +79,7 @@ namespace CompanyAPI.Repository.Company
         {
             bool companyExist = await _context.Company.AnyAsync(x => x.Name == name);
 
-            if (!companyExist)
-            {
-                throw new NotFoundException("Company not found");
-            }
+            
 
             return companyExist;
 
@@ -92,10 +89,6 @@ namespace CompanyAPI.Repository.Company
         {
             bool companyExist = await _context.Company.AnyAsync(x => x.Id == companyId);
 
-            if (!companyExist)
-            {
-                throw new NotFoundException("Company not found");
-            }
 
             return companyExist;
         }
@@ -126,7 +119,7 @@ namespace CompanyAPI.Repository.Company
 
             return await _context.Branchs
                 .Where(c => c.Id == companyId)
-                .SelectMany(c => c.Equipments)
+                .SelectMany(x => x.Equipments)
                 .ToListAsync();
         }
 

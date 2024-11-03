@@ -16,23 +16,53 @@ namespace CompanyAPI.Repository.Employee
 
         public async Task AddEmployeeAsync(EmployeeModel employee)
         {
+            if (employee == null)
+            {
+                throw new ArgumentNullException(nameof(employee), "Employee cannot be null");
+            }
+
             if (!await CheckAreaExistByIdAsync(employee.AreaId))
             {
                 throw new NotFoundException("Id of the area not found");
             }
-            var areaLinked = await _context.Areas.FindAsync(employee.AreaId);
 
-            if (areaLinked != null)
+            var areaLinked = await _context.Areas
+                .Include(a => a.LinkedBranch)
+                .ThenInclude(b => b.Employees)
+                .FirstOrDefaultAsync(a => a.Id == employee.AreaId);
+
+            if (areaLinked == null)
             {
-                employee.AreaLinked = areaLinked;
-                areaLinked.Employees.Add(employee);
-                areaLinked.LinkedBranch.Employees.Add(employee);
-              
+                throw new NotFoundException("Area not found");
             }
+
+            if (areaLinked.LinkedBranch == null)
+            {
+                throw new NotFoundException("Linked branch not found");
+            }
+
+            if (areaLinked.Employees == null)
+            {
+                areaLinked.Employees = new List<EmployeeModel>();
+            }
+
+            if (areaLinked.LinkedBranch.Employees == null)
+            {
+                areaLinked.LinkedBranch.Employees = new List<EmployeeModel>();
+            }
+
+            areaLinked.EmployeesExpense += employee.Salary;
+            employee.AreaLinked = areaLinked;
+            areaLinked.Employees.Add(employee);
+            areaLinked.LinkedBranch.Employees.Add(employee);
 
             await _context.Employees.AddAsync(employee);
             await _context.SaveChangesAsync();
         }
+
+
+
+
 
         public async Task UpdateEmployeeAsync(EmployeeModel employee)
         {
@@ -66,7 +96,7 @@ namespace CompanyAPI.Repository.Employee
             await _context.SaveChangesAsync();
         }
 
-        
+
 
         public async Task DeleteEmployeeAsync(EmployeeModel employee)
         {
@@ -124,5 +154,5 @@ namespace CompanyAPI.Repository.Employee
         {
             return await _context.Areas.AnyAsync(a => a.Id == areaId);
         }
-    }
+    } 
 }

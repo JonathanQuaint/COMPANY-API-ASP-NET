@@ -4,12 +4,14 @@ using CompanyAPI.Dto.CompanyDTOS;
 using CompanyAPI.Services.Branch;
 using CompanyAPI.Services.Company;
 using CompanyAPI.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace CompanyAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("Branchs")]
     [ApiController]
     public class BranchsController : ControllerBase
     {
@@ -22,6 +24,7 @@ namespace CompanyAPI.Controllers
 
         // POST: Create the Branch 
         [HttpPost("CreateFilial")]
+        [Authorize]
         public async Task<ActionResult<ResponseModel<List<BranchModel>>>> CreateFilial([FromBody] CreateBranchDto branchInfos)
         {
             var branch = await _branchService.CreateFilial(branchInfos);

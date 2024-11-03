@@ -1,14 +1,17 @@
 ﻿using CompanyAPI.Dto.AreaDTOS;
 using CompanyAPI.Services.Area;
 using CompanyAPI.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CompanyAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("Areas")]
     [ApiController]
+   
     public class AreasController : ControllerBase
     {
         private readonly IAreaInterface _areaService;

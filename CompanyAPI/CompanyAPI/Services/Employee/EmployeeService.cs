@@ -31,6 +31,7 @@ namespace CompanyAPI.Services.Employee
 
                 var employee = new EmployeeModel()
                 {
+                    Name = employeeDto.NameEmployee,
                     AreaId = employeeDto.AreaId,
                     Salary = employeeDto.Salary
                 };
@@ -44,7 +45,7 @@ namespace CompanyAPI.Services.Employee
             }
             catch (DbUpdateException ex)
             {
-                throw new DbUpdateException($"Error creating employee: {ex.Message}");
+                throw new DbUpdateException($"Error: {ex.InnerException?.Message}");
             }
         }
 
