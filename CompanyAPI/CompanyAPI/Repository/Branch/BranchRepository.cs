@@ -103,7 +103,7 @@ namespace CompanyAPI.Repository.Branch
             return await _context.Branchs.Where(b => b.CompanyID == companyId).ToListAsync();
         }
 
-        public async Task<double> CalculateAllExpenseInBranch(int branchId)
+        public async Task<double> CalculateAllExpenseInBranchAsync(int branchId)
         {
             // Calculate total expense for the branch
             double totalExpense = await _context.Branchs

@@ -1,4 +1,6 @@
 ﻿using CompanyAPI.ViewModel;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CompanyAPI.Repository.Employee
 {
@@ -12,8 +14,10 @@ namespace CompanyAPI.Repository.Employee
         Task<List<EmployeeModel>> GetEmployeesInAreaAsync(int areaId);
         Task<bool> CheckEmployeeExistByIdAsync(int employeeId);
         Task<EmployeeModel?> GetAllDetailsAboutEmployeeAsync(int employeeId);
-        Task<List<EmployeeModel>> GetAllEmployeesInCompany(int companyId);
-        Task<List<EmployeeModel>> GetAllEmployeesInBranch(int branchId);
-        Task<bool> CheckAreaExistByIdAsync(int areaId); 
+        Task<List<EmployeeModel>> GetAllEmployeesInCompanyAsync(int companyId);
+        Task<List<EmployeeModel>> GetAllEmployeesInBranchAsync(int branchId);
+  
+
+
     }
 }

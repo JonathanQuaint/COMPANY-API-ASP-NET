@@ -1,4 +1,5 @@
 ﻿using CompanyAPI.ViewModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompanyAPI.Repository.Area
 {
@@ -10,9 +11,13 @@ namespace CompanyAPI.Repository.Area
         Task<List<AreaModel>> GetAllAreasAsync();
         Task<AreaModel> GetAreaByIdAsync(int areaId);
         Task<List<AreaModel>> GetAreasInBranchAsync(int branchId);
-        Task<bool> CheckAreaExistByIdAsync(int areaId);
+        Task<List<AreaModel>> GetAreasInCompanyAsync(int companyId);
         Task<AreaModel> GetAllDetailsAboutAreaAsync(int areaId);
-        Task<bool> CheckBranchExistByIdAsync(int Branch);
-        Task<double> GetExpenseInArea(int areaId); 
+        Task<double> GetExpenseInAreaAsync(int areaId);
+    
+       
+
+
+
     }
 }

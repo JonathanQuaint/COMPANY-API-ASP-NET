@@ -48,51 +48,22 @@ namespace CompanyAPI.Controllers
             return Ok(company);
         }
 
-        // GET: All Branches in Company
-        [HttpGet("AllCompanies")]
-        public async Task<ActionResult<ResponseModel<List<BranchModel>>>> AllBranchsInCompany(int companyID)
-        {
-            var branches = await _companyInterface.ListAllBranchsInCompany(companyID);
-            return Ok(branches);
-        }
+       
 
         // GET: List Expense in Company
         [HttpGet("ListExpenseInCompany")]
-        public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> ListExpenseInCompany()
+        public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> ListExpenseInCompany(int companyId)
         {
-            var expenses = await _companyInterface.ListExpenseInCompany();
+            var expenses = await _companyInterface.ExpenseInCompany(companyId);
             return Ok(expenses);
         }
 
-        // GET: List All Areas
-        [HttpGet("ListAllAreas")]
-        public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> ListAllAreas()
-        {
-            var areas = await _companyInterface.ListAllAreas();
-            return Ok(areas);
-        }
-
-        // GET: List All Employees
-        [HttpGet("ListAllEmployees")]
-        public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> ListAllEmployees()
-        {
-            var employees = await _companyInterface.ListAllEmployees();
-            return Ok(employees);
-        }
-
-        // GET: List All Equipments
-        [HttpGet("ListAllEquipments")]
-        public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> ListAllEquipments()
-        {
-            var equipments = await _companyInterface.ListAllEquipments();
-            return Ok(equipments);
-        }
-
+       
         // GET: List All in Company
         [HttpGet("ListAllInCompany")]
-        public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> ListAllInCompany()
+        public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> ListAllInCompany(int companyId)
         {
-            var allInCompany = await _companyInterface.ListAllInCompany();
+            var allInCompany = await _companyInterface.ListAllInCompany(companyId);
             return Ok(allInCompany);
         }
     }

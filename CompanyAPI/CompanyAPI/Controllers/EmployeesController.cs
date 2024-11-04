@@ -1,5 +1,6 @@
 ﻿using CompanyAPI.Dto.CompanyDTOS;
 using CompanyAPI.Dto.EmployeeDTOS;
+using CompanyAPI.Services.Area;
 using CompanyAPI.Services.Company;
 using CompanyAPI.Services.Employee;
 using CompanyAPI.Services.Equipment;
@@ -70,6 +71,41 @@ namespace CompanyAPI.Controllers
             var result = await _employeeInterface.DeleteEmployee(id);
             return Ok(result);
         }
+
+        // GET: List All Employees
+        [HttpGet("AllEmployees")]
+        public async Task<ActionResult<ResponseModel<List<EmployeeModel>>>> AllEmployees()
+        {
+            var employees = await _employeeInterface.ListAllEmployees();
+            return Ok(employees);
+        }
+
+
+        // GET: List All Employees in Branch
+        [HttpGet("AllEmployeesInCompany")]
+        public async Task<ActionResult<ResponseModel<List<EmployeeModel>>>> AllEmployeesInCompany(int company)
+        {
+            var employees = await _employeeInterface.ListAllEmployeesInCompany(company);
+            return Ok(employees);
+        }
+
+        // GET: List All Employees In Branch
+        [HttpGet("AllEmployeesInBranch")]
+        public async Task<ActionResult<ResponseModel<List<EmployeeModel>>>> AllEmployeesInBranch(int branchId)
+        {
+            var employees = await _employeeInterface.ListAllEmployeesInBranch(branchId);
+            return Ok(employees);
+        }
+
+        // GET: List All 
+        [HttpGet("AllEmployeesInArea")]
+        public async Task<ActionResult<ResponseModel<List<EmployeeModel>>>> AllEmployeesInArea(int areaId)
+        {
+            var employees = await _employeeInterface.ListAllEmployeesInArea(areaId);
+            return Ok(employees);
+        }
+
+
 
     }
 }

@@ -1,6 +1,8 @@
 ﻿using CompanyAPI.Data;
 using CompanyAPI.Services.Exceptions;
 using CompanyAPI.ViewModel;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompanyAPI.Repository.Area
@@ -28,12 +30,14 @@ namespace CompanyAPI.Repository.Area
             await _context.Areas.AddAsync(area);
             await _context.SaveChangesAsync();
         }
-      
+
         public async Task UpdateAreaAsync(AreaModel area)
         {
-            if (!await CheckBranchExistByIdAsync(area.BranchId))
+            bool branchExist = await _context.Branchs.AnyAsync(c => c.Id == area.BranchId);
+
+            if (!branchExist)
             {
-                throw new NotFoundException("Id of the branch not found");
+                throw new NotFoundException("branch not found by Id");
             }
 
             if (area.LinkedBranch == null)
@@ -75,7 +79,7 @@ namespace CompanyAPI.Repository.Area
             return await _context.Areas.ToListAsync();
         }
 
-        public async Task<double> GetExpenseInArea(int areaId)
+        public async Task<double> GetExpenseInAreaAsync(int areaId)
         {
 
             var area = await _context.Areas.FindAsync(areaId);
@@ -88,7 +92,7 @@ namespace CompanyAPI.Repository.Area
 
             var TotalCosts = area.EquipmentsExpense + area.EmployeesExpense;
 
-          
+
             area.Expense = TotalCosts;
 
             return TotalCosts;
@@ -101,16 +105,46 @@ namespace CompanyAPI.Repository.Area
             return await _context.Areas.FindAsync(areaId);
         }
 
-       
+
         public async Task<List<AreaModel>> GetAreasInBranchAsync(int branchId)
         {
+
+            bool branchExist = await _context.Branchs.AnyAsync(c => c.Id == branchId);
+
+            if (!branchExist)
+            {
+                throw new NotFoundException("branch not found by Id");
+            }
+
             return await _context.Areas.Where(a => a.BranchId == branchId).ToListAsync();
         }
 
-       
+
+        public async Task<List<AreaModel>> GetAreasInCompanyAsync(int companyId)
+        {
+            bool companyExist = await _context.Company.AnyAsync(x => x.Id == companyId);
+
+            if (!companyExist)
+            {
+                throw new NotFoundException("Company not found by Id");
+            }
+
+            return await _context.Branchs
+                .Where(b => b.CompanyID == companyId)
+                .SelectMany(b => b.Areas)
+                .ToListAsync();
+        }
+
 
         public async Task<AreaModel> GetAllDetailsAboutAreaAsync(int areaId)
         {
+            bool areaExist = await _context.Areas.AnyAsync(a => a.Id == areaId);
+
+            if (!areaExist)
+            {
+                throw new NotFoundException("Area not found");
+            }
+
             return await _context.Areas
                 .Include(a => a.Id)
                 .Include(a => a.BranchId)
@@ -121,17 +155,8 @@ namespace CompanyAPI.Repository.Area
                 .FirstOrDefaultAsync(a => a.Id == areaId);
         }
 
-        public async Task<bool> CheckBranchExistByIdAsync(int Branch)
-        {
-            return await _context.Branchs.AnyAsync(c => c.Id == Branch);
-        }
+     
 
-        public async Task<bool> CheckAreaExistByIdAsync(int areaId)
-        {
-            return await _context.Areas.AnyAsync(a => a.Id == areaId);
-        }
-
-       
 
     }
 }

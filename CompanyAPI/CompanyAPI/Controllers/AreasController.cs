@@ -1,5 +1,6 @@
 ﻿using CompanyAPI.Dto.AreaDTOS;
 using CompanyAPI.Services.Area;
+using CompanyAPI.Services.Company;
 using CompanyAPI.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,22 +20,6 @@ namespace CompanyAPI.Controllers
         public AreasController(IAreaInterface areaService)
         {
             _areaService = areaService;
-        }
-
-        // GET: api/Area
-        [HttpGet]
-        public async Task<ActionResult<ResponseModel<List<AreaModel>>>> GetAllAreas()
-        {
-            var areas = await _areaService.ListAllAreas();
-            return Ok(areas);
-        }
-
-        // GET api/Area/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseModel<AreaModel>>> GetAreaDetails(int id)
-        {
-            var area = await _areaService.InformationsAboutArea(id);
-            return Ok(area);
         }
 
         // POST api/Area/CreateArea
@@ -61,5 +46,41 @@ namespace CompanyAPI.Controllers
             var area = await _areaService.DeleteArea(id);
             return Ok(area);
         }
+
+
+        // GET: api/Area
+        [HttpGet]
+        public async Task<ActionResult<ResponseModel<List<AreaModel>>>> GetAllAreas()
+        {
+            var areas = await _areaService.ListAllAreas();
+            return Ok(areas);
+        }
+
+        // GET api/Area/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ResponseModel<AreaModel>>> GetAreaDetails(int id)
+        {
+            var area = await _areaService.InformationsAboutArea(id);
+            return Ok(area);
+        }
+
+        // GET: List All Areas
+        [HttpGet("AllAreasInCompany")]
+        public async Task<ActionResult<ResponseModel<List<AreaModel>>>> AllAreasInCompany(int company)
+        {
+            var areas = await _areaService.ListAllAreasInCompany(company);
+            return Ok(areas);
+        }
+
+        // GET: List All Areas
+        [HttpGet("AllAreasInBranch")]
+        public async Task<ActionResult<ResponseModel<List<AreaModel>>>> AllAreasInBranch(int branch)
+        {
+            var areas = await _areaService.GetAreasInBranch(branch);
+            return Ok(areas);
+        }
+
+
+     
     }
 }

@@ -12,5 +12,7 @@ namespace CompanyAPI.Services.Area
         Task<ResponseModel<List<AreaModel>>> DeleteArea(int areaId);
         Task<ResponseModel<List<AreaModel>>> GetAreasInBranch(int branchId);
         Task<ResponseModel<double>> GetExpenseInArea(int areaId);
+
+        Task<ResponseModel<List<AreaModel>>> ListAllAreasInCompany(int company);
     }
 }

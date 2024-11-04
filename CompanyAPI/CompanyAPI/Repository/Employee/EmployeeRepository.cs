@@ -21,9 +21,11 @@ namespace CompanyAPI.Repository.Employee
                 throw new ArgumentNullException(nameof(employee), "Employee cannot be null");
             }
 
-            if (!await CheckAreaExistByIdAsync(employee.AreaId))
+            bool areaExist = await _context.Areas.AnyAsync(c => c.Id == employee.AreaId);
+
+            if (!areaExist)
             {
-                throw new NotFoundException("Id of the area not found");
+                throw new NotFoundException("Area not found by Id");
             }
 
             var areaLinked = await _context.Areas
@@ -52,6 +54,7 @@ namespace CompanyAPI.Repository.Employee
             }
 
             areaLinked.EmployeesExpense += employee.Salary;
+            areaLinked.LinkedBranch.EmployeesExpense += employee.Salary;
             employee.AreaLinked = areaLinked;
             areaLinked.Employees.Add(employee);
             areaLinked.LinkedBranch.Employees.Add(employee);
@@ -59,9 +62,6 @@ namespace CompanyAPI.Repository.Employee
             await _context.Employees.AddAsync(employee);
             await _context.SaveChangesAsync();
         }
-
-
-
 
 
         public async Task UpdateEmployeeAsync(EmployeeModel employee)
@@ -116,19 +116,39 @@ namespace CompanyAPI.Repository.Employee
 
         public async Task<List<EmployeeModel>> GetEmployeesInAreaAsync(int areaId)
         {
+            bool areaExist = await _context.Areas.AnyAsync(c => c.Id == areaId);
+
+            if (!areaExist)
+            {
+                throw new NotFoundException("Area not found by Id");
+            }
+
             return await _context.Employees.Where(e => e.AreaId == areaId).ToListAsync();
         }
 
-        public async Task<List<EmployeeModel>> GetAllEmployeesInBranch(int branchId)
+        public async Task<List<EmployeeModel>> GetAllEmployeesInBranchAsync(int branchId)
         {
+            bool branchExist = await _context.Branchs.AnyAsync(c => c.Id == branchId);
+
+            if (!branchExist)
+            {
+                throw new NotFoundException("Branch not found by Id");
+            }
             return await _context.Branchs
                 .Where(b => b.Id == branchId)
                 .SelectMany(b => b.Employees)
                 .ToListAsync();
         }
 
-        public async Task<List<EmployeeModel>> GetAllEmployeesInCompany(int companyId)
+        public async Task<List<EmployeeModel>> GetAllEmployeesInCompanyAsync(int companyId)
         {
+            bool companyExist = await _context.Company.AnyAsync(c => c.Id == companyId);
+
+            if (!companyExist)
+            {
+                throw new NotFoundException("Company not found by Id");
+            }
+
             return await _context.Branchs
                  .Where(b => b.Id == companyId)
                 .SelectMany(b => b.Employees)
@@ -150,9 +170,5 @@ namespace CompanyAPI.Repository.Employee
                 .FirstOrDefaultAsync(e => e.Id == employeeId);
         }
 
-        public async Task<bool> CheckAreaExistByIdAsync(int areaId)
-        {
-            return await _context.Areas.AnyAsync(a => a.Id == areaId);
-        }
-    } 
+    }
 }

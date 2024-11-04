@@ -2,6 +2,7 @@
 using CompanyAPI.Dto.EquipmentDTOS;
 using CompanyAPI.Services.Exceptions;
 using CompanyAPI.ViewModel;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using System.ComponentModel.Design;
@@ -23,12 +24,7 @@ namespace CompanyAPI.Services.Equipment
 
             try
             {
-                bool AreaExist = await _equipmentRepository.CheckAreaExistByIdAsync(equipmentDto.AreaId);
-                if (!AreaExist)
-                {
-                    throw new NotFoundException("Area not found");
-                }
-
+       
                 var equipment = new EquipmentModel()
                 {
                     AreaId = equipmentDto.AreaId,
@@ -63,22 +59,7 @@ namespace CompanyAPI.Services.Equipment
                     throw new NotFoundException("Equipment not found by ID");
                 }
 
-                bool areaExist = await _equipmentRepository.CheckAreaExistByIdAsync(equipmentDto.AreaId);
-
-                if (!areaExist)
-                {
-                    throw new NotFoundException("Area not found by ID");
-                }
-
-
-                double priceDiference = equipment.Price - equipmentDto.Price;
-
-                equipment.Name = equipmentDto.NameEquipment;
-                equipment.Price = equipmentDto.Price;
-                equipment.AreaId = equipmentDto.AreaId;
-
-                equipment.AreaLinked.Expense += priceDiference;
-                equipment.AreaLinked.LinkedBranch.Expense += priceDiference;
+                
 
                 await _equipmentRepository.UpdateEquipmentAsync(equipment);
 
@@ -86,7 +67,7 @@ namespace CompanyAPI.Services.Equipment
                 reply.Mensagem = "Equipment updated successfully";
 
                 return reply;
-               
+
 
             }
             catch (DbUpdateException ex)
@@ -100,19 +81,50 @@ namespace CompanyAPI.Services.Equipment
         {
             ResponseModel<EquipmentModel> reply = new();
 
-            try {
+            try
+            {
                 var equipment = await _equipmentRepository.GetEquipmentByIdAsync(equipmentId);
 
                 reply.Dados = equipment;
                 reply.Mensagem = "Equipment successfully retrieved";
                 return reply;
 
-                }
+            }
             catch (DbUpdateException ex)
             {
                 throw new DbUpdateException($"Error retrieving equipment: {ex.Message}");
             }
 
+        }
+        public async Task<ResponseModel<List<EquipmentModel>>> ListAllEquipmentsInArea(int areaId)
+        {
+            ResponseModel<List<EquipmentModel>> reply = new();
+            try
+            {
+                reply.Dados = await _equipmentRepository.GetEquipmentsInAreaAsync(areaId);
+                reply.Mensagem = "Equipments successfully retrieved";
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving equipments: {ex.Message}");
+            }
+        }
+
+        public async Task<ResponseModel<List<EquipmentModel>>> ListAllEquipmentsInBranch(int branchId)
+        {
+            ResponseModel<List<EquipmentModel>> reply = new();
+            try
+            {
+
+                reply.Dados = await _equipmentRepository.GetAllEquipmentsInBranchAsync(branchId);
+                reply.Mensagem = "Equipments successfully retrieved";
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving equipments: {ex.Message}");
+            }
         }
 
         public async Task<ResponseModel<List<EquipmentModel>>> ListAllEquipmentsInCompany(int companyId)
@@ -120,7 +132,8 @@ namespace CompanyAPI.Services.Equipment
             ResponseModel<List<EquipmentModel>> reply = new();
             try
             {
-                reply.Dados = await _equipmentRepository.GetAllEquipmentsInCompany(companyId);
+               
+                reply.Dados = await _equipmentRepository.GetAllEquipmentsInCompanyAsync(companyId);
                 reply.Mensagem = "Equipments successfully retrieved";
                 return reply;
             }

@@ -105,53 +105,13 @@ namespace CompanyAPI.Services.Company
             }
         }
 
-        public async Task<ResponseModel<List<AreaModel>>> ListAllAreasInCompany(int company)
-        {
-            ResponseModel<List<AreaModel>> reply = new();
-            try
-            {
-                reply.Dados = await _companyRepository.GetAllAreasInCompanyAsync(company);
-                reply.Mensagem = "Areas successfully retrieved";
-                return reply;
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new DbUpdateException($"Error retrieving areas: {ex.Message}");
-            }
-        }
-
-        public async Task<ResponseModel<List<BranchModel>>> ListAllBranchsInCompany(int companyId)
-        {
-            ResponseModel<List<BranchModel>> reply = new();
-            try
-            {
-                bool companyExist = await _companyRepository.CheckCompanyExistByIdAsync(companyId);
-
-                if (!companyExist)
-                {
-                    throw new NotFoundException("Company not found");
-                }
-
-                reply.Dados = await _companyRepository.GetbranchsInCompanyAsync(companyId);
-                reply.Mensagem = "Branches successfully retrieved";
-                return reply;
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new DbUpdateException($"Error retrieving branches: {ex.Message}");
-            }
-        }
-
-       
-
-     
+  
 
         public async Task<ResponseModel<List<IGrouping<BranchModel, AreaModel>>>> ListAllInCompany(int companyId)
         {
             ResponseModel<List<IGrouping<BranchModel, AreaModel>>> reply = new();
             try
             {
-                
 
                 reply.Dados = await _companyRepository.GetAllInCompanyAsync(companyId);
                 reply.Mensagem = "All data successfully retrieved";
@@ -178,34 +138,6 @@ namespace CompanyAPI.Services.Company
             }
         }
 
-        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListAllBranchsInCompany(int companyId)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListExpenseInCompany()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListAllAreas()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListAllEmployees()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListAllEquipments()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ResponseModel<List<CompanyModel>>> ICompanyInterface.ListAllInCompany()
-        {
-            throw new NotImplementedException();
-        }
+     
     }
 }

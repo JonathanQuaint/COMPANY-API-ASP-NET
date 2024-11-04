@@ -134,14 +134,39 @@ namespace CompanyAPI.Services.Branch
                     throw new Exception($"Error deleting Branch: {ex.Message}");
                 }
             }
+
+
+
+        public async Task<ResponseModel<List<BranchModel>>> ListAllBranchsInCompany(int companyId)
+        {
+            ResponseModel<List<BranchModel>> reply = new();
+            try
+            {
+                bool companyExist = await _branchRepository.CheckCompanyExistByIdAsync(companyId);
+
+                if (!companyExist)
+                {
+                    throw new NotFoundException("Company not found");
+                }
+
+                reply.Dados = await _branchRepository.GetBranchesInCompanyAsync(companyId);
+                reply.Mensagem = "Branches successfully retrieved";
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving branches: {ex.Message}");
+            }
         }
 
-
-
-
-
-
     }
+
+
+
+
+
+
+}
 
 
 

@@ -23,12 +23,7 @@ namespace CompanyAPI.Services.Employee
 
             try
             {
-                bool AreaExist = await _employeeRepository.CheckAreaExistByIdAsync(employeeDto.AreaId);
-                if (!AreaExist)
-                {
-                    throw new NotFoundException("Area not found");
-                }
-
+              
                 var employee = new EmployeeModel()
                 {
                     Name = employeeDto.NameEmployee,
@@ -54,12 +49,7 @@ namespace CompanyAPI.Services.Employee
             ResponseModel<EmployeeModel> reply = new();
             try
             {
-                bool areaExist = await _employeeRepository.CheckAreaExistByIdAsync(employeeId);
-
-                if (!areaExist)
-                {
-                    throw new NotFoundException("Area not found");
-                }
+               
 
                 reply.Dados = await _employeeRepository.GetAllDetailsAboutEmployeeAsync(employeeId);
                 reply.Mensagem = "Area information successfully retrieved";
@@ -84,12 +74,6 @@ namespace CompanyAPI.Services.Employee
                     throw new NotFoundException("Employee not found by ID");
                 }
 
-                bool areaExist = await _employeeRepository.CheckAreaExistByIdAsync(employeeDto.AreaId);
-
-                if (!areaExist)
-                {
-                    throw new NotFoundException("Area not found by ID");
-                }
 
                 double salaryDiference = employee.Salary - employeeDto.Salary;
 
@@ -118,7 +102,51 @@ namespace CompanyAPI.Services.Employee
             ResponseModel<List<EmployeeModel>> reply = new();
             try
             {
-                reply.Dados = await _employeeRepository.GetAllEmployeesInCompany(companyId);
+                reply.Dados = await _employeeRepository.GetAllEmployeesInCompanyAsync(companyId);
+                reply.Mensagem = "Employees successfully retrieved";
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving employees: {ex.Message}");
+            }
+        }
+        public async Task<ResponseModel<List<EmployeeModel>>> ListAllEmployeesInArea(int areaId)
+        {
+            ResponseModel<List<EmployeeModel>> reply = new();
+            try
+            {
+                reply.Dados = await _employeeRepository.GetEmployeesInAreaAsync(areaId);
+                reply.Mensagem = "Employees successfully retrieved";
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving employees: {ex.Message}");
+            }
+        }
+
+        public async Task<ResponseModel<List<EmployeeModel>>> ListAllEmployeesInBranch(int areaId)
+        {
+            ResponseModel<List<EmployeeModel>> reply = new();
+            try
+            {
+                reply.Dados = await _employeeRepository.GetAllEmployeesInBranchAsync(areaId);
+                reply.Mensagem = "Employees successfully retrieved";
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving employees: {ex.Message}");
+            }
+        }
+
+        public async Task<ResponseModel<List<EmployeeModel>>> ListAllEmployees()
+        {
+            ResponseModel<List<EmployeeModel>> reply = new();
+            try
+            {
+                reply.Dados = await _employeeRepository.GetAllEmployeesAsync();
                 reply.Mensagem = "Employees successfully retrieved";
                 return reply;
             }

@@ -33,20 +33,6 @@ namespace CompanyAPI.Repository.Company
             return await _context.Company.ToListAsync();
         }
 
-        public async Task<List<BranchModel>> GetbranchsInCompanyAsync(int companyId)
-        {
-            bool branchsExist = await _context.Branchs.AnyAsync(x => x.CompanyID == companyId);
-
-            if (!branchsExist)
-            {
-                throw new NotFoundException("This company has no affiliates");
-            }
-
-
-            return await _context.Branchs
-                .Where(c => c.CompanyLinked.Id == companyId)
-                .ToListAsync();
-        }
 
         public async Task<CompanyModel> GetCompanyByIdAsync(int companyId)
         {
@@ -101,37 +87,7 @@ namespace CompanyAPI.Repository.Company
                 .FirstOrDefaultAsync(x => x.Id == companyId);
         }
 
-        public async Task<List<AreaModel>> GetAllAreasInCompanyAsync(int companyId)
-        {
-            return await _context.Branchs
-                .Where(b => b.CompanyID == companyId)
-                .SelectMany(b => b.Areas)
-                .ToListAsync();
-
-
-
-
-        }
-
-        public async Task<List<EquipmentModel>> GetAllEquipmentsInCompanyAsync(int companyId)
-        {
-
-
-            return await _context.Branchs
-                .Where(c => c.Id == companyId)
-                .SelectMany(x => x.Equipments)
-                .ToListAsync();
-        }
-
-        public async Task<List<EmployeeModel>> GetAllEmployeesInCompanyAsync(int companyId)
-        {
-
-
-            return await _context.Branchs
-                .Where(c => c.Id == companyId)
-                .SelectMany(c => c.Employees)
-                .ToListAsync();
-        }
+     
 
         public async Task<List<IGrouping<BranchModel, AreaModel>>> GetAllInCompanyAsync(int companyId)
         {

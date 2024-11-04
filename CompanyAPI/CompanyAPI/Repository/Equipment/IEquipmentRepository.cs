@@ -1,5 +1,6 @@
 ﻿
 using CompanyAPI.ViewModel;
+using Microsoft.EntityFrameworkCore;
 
 public interface IEquipmentRepository
 {
@@ -11,9 +12,9 @@ public interface IEquipmentRepository
     Task<List<EquipmentModel>> GetEquipmentsInAreaAsync(int areaId);
     Task<bool> CheckEquipmentExistByIdAsync(int equipmentId);
     Task<EquipmentModel?> GetAllDetailsAboutEquipmentAsync(int equipmentId);
-    Task<List<EquipmentModel>> GetAllEquipmentsInCompany(int companyId);
-    Task<List<EquipmentModel>> GetAllEquipmentsInBranch(int branchId); 
-    Task<bool> CheckAreaExistByIdAsync(int areaId); 
+    Task<List<EquipmentModel>> GetAllEquipmentsInCompanyAsync(int companyId);
+    Task<List<EquipmentModel>> GetAllEquipmentsInBranchAsync(int branchId); 
+
 }
 
 

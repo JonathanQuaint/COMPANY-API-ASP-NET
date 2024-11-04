@@ -20,6 +20,10 @@ namespace CompanyAPI.ViewModel
 
         public double AreasExpense { get; set; }
 
+        public double EquipmentsExpense { get; set; }
+
+        public double EmployeesExpense { get; set; }
+
         [JsonIgnore]
         public ICollection<AreaModel> Areas { get; set; } = new List<AreaModel>();
 

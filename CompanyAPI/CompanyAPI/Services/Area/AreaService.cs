@@ -22,7 +22,7 @@ namespace CompanyAPI.Services.Area
 
             try
             {
-               
+
                 var area = new AreaModel
                 {
                     NameArea = areaDto.NameArea,
@@ -47,12 +47,6 @@ namespace CompanyAPI.Services.Area
             ResponseModel<AreaModel> reply = new();
             try
             {
-                bool areaExist = await _areaRepository.CheckAreaExistByIdAsync(areaId);
-
-                if (!areaExist)
-                {
-                    throw new NotFoundException("Area not found");
-                }
 
                 reply.Dados = await _areaRepository.GetAllDetailsAboutAreaAsync(areaId);
                 reply.Mensagem = "Area information successfully retrieved";
@@ -69,12 +63,7 @@ namespace CompanyAPI.Services.Area
         {
             ResponseModel<List<AreaModel>> reply = new();
 
-            bool areaExist = await _areaRepository.CheckAreaExistByIdAsync(areaDto.Id);
 
-            if (!areaExist)
-            {
-                throw new NotFoundException("Area not found");
-            }
 
             try
             {
@@ -99,13 +88,6 @@ namespace CompanyAPI.Services.Area
         public async Task<ResponseModel<List<AreaModel>>> DeleteArea(int areaId)
         {
             ResponseModel<List<AreaModel>> reply = new();
-
-            bool areaExist = await _areaRepository.CheckAreaExistByIdAsync(areaId);
-
-            if (!areaExist)
-            {
-                throw new NotFoundException("Area not found");
-            }
 
             try
             {
@@ -140,17 +122,27 @@ namespace CompanyAPI.Services.Area
             }
         }
 
-      
+        public async Task<ResponseModel<List<AreaModel>>> ListAllAreasInCompany(int company)
+        {
+            ResponseModel<List<AreaModel>> reply = new();
+            try
+            {
+                reply.Dados = await _areaRepository.GetAreasInCompanyAsync(company);
+                reply.Mensagem = "Areas successfully retrieved";
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving areas: {ex.Message}");
+            }
+        }
+
         public async Task<ResponseModel<List<AreaModel>>> GetAreasInBranch(int branchId)
         {
             ResponseModel<List<AreaModel>> reply = new();
             try
             {
-                bool branchExist = await _areaRepository.CheckBranchExistByIdAsync(branchId);
-                if (!branchExist)
-                {
-                    throw new NotFoundException("Branch not found");
-                }
+
 
                 reply.Dados = await _areaRepository.GetAreasInBranchAsync(branchId);
                 reply.Mensagem = "Areas in branch successfully retrieved";
@@ -167,9 +159,9 @@ namespace CompanyAPI.Services.Area
         {
             ResponseModel<double> reply = new();
             try
-            {  
+            {
 
-                reply.Dados = await _areaRepository.GetExpenseInArea(areaId);
+                reply.Dados = await _areaRepository.GetExpenseInAreaAsync(areaId);
                 reply.Mensagem = "Expense in area successfully retrieved";
 
                 return reply;

@@ -54,5 +54,13 @@ namespace CompanyAPI.Controllers
             var result = await _branchService.DeleteFilial(branchID);
             return Ok(result);
         }
+
+        // GET: All Branches in Company
+        [HttpGet("AllCompanies")]
+        public async Task<ActionResult<ResponseModel<List<BranchModel>>>> AllBranchsInCompany(int companyID)
+        {
+            var branches = await _branchService.ListAllBranchsInCompany(companyID);
+            return Ok(branches);
+        }
     }
 }
