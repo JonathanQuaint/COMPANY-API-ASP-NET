@@ -156,6 +156,40 @@ namespace CompanyAPI.Services.Employee
             }
         }
 
+        public async Task<ResponseModel<double>> ListAllEmployeesExpenseinArea(int areaId)
+        {
+            ResponseModel<double> reply = new();
+            try
+            {
+                reply.Dados = await _employeeRepository.AllEmployeesExpenseInArea(areaId);
+                reply.Mensagem = "Employees expense successfully retrieved";
+                return reply;
+            }
+
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving expense: {ex.Message}");
+            }
+
+        }
+
+        public async Task<ResponseModel<double>> ListAllEmployeesExpenseinBranch(int branchId)
+        {
+            ResponseModel<double> reply = new();
+            try
+            {
+                reply.Dados = await _employeeRepository.AllEmployeesExpenseInBranch(branchId);
+                reply.Mensagem = "Employees expense successfully retrieved";
+                return reply;
+            }
+
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving expense: {ex.Message}");
+            }
+
+        }
+
         public async Task<ResponseModel<EmployeeModel>> GetEmployee(int employeeId)
         {
             ResponseModel<EmployeeModel> reply = new();

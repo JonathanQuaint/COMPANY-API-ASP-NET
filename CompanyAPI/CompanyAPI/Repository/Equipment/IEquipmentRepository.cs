@@ -13,7 +13,10 @@ public interface IEquipmentRepository
     Task<bool> CheckEquipmentExistByIdAsync(int equipmentId);
     Task<EquipmentModel?> GetAllDetailsAboutEquipmentAsync(int equipmentId);
     Task<List<EquipmentModel>> GetAllEquipmentsInCompanyAsync(int companyId);
-    Task<List<EquipmentModel>> GetAllEquipmentsInBranchAsync(int branchId); 
+    Task<List<EquipmentModel>> GetAllEquipmentsInBranchAsync(int branchId);
+    Task<double> AllEquipmentExpenseInArea(int areaId);
+
+    Task<double> AllEquipmentExpenseInBranch(int branchId);
 
 }
 

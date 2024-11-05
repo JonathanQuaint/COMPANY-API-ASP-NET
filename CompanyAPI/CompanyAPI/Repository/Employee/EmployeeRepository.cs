@@ -170,5 +170,23 @@ namespace CompanyAPI.Repository.Employee
                 .FirstOrDefaultAsync(e => e.Id == employeeId);
         }
 
+        public async Task<double> AllEmployeesExpenseInArea(int areaId)
+        {
+            return await _context.Areas
+                .Where(x => x.Id == areaId)
+                .Select(x => x.EmployeesExpense)
+                .FirstOrDefaultAsync();
+
+        }
+
+        public async Task<double> AllEmployeesExpenseInBranch(int branchId)
+        {
+            return await _context.Branchs
+                .Where(x => x.Id == branchId)
+                .Select(x => x.EmployeesExpense)
+                .FirstOrDefaultAsync();
+
+        }
+
     }
 }

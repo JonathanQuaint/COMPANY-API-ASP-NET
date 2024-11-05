@@ -227,5 +227,23 @@ namespace CompanyAPI.Repository.Equipment
            return await _context.Equipments.AnyAsync(e => e.Id == equipmentId);
         }
 
+
+        public async Task<double> AllEquipmentExpenseInArea(int areaId)
+        {
+            return await _context.Areas
+                .Where(x => x.Id == areaId)
+                .Select(x => x.EquipmentsExpense)
+                .FirstOrDefaultAsync();
+
+        }
+
+        public async Task<double> AllEquipmentExpenseInBranch(int branchId)
+        {
+            return await _context.Branchs
+                .Where(x => x.Id == branchId)
+                .Select(x => x.EquipmentsExpense)
+                .FirstOrDefaultAsync();
+
+        }
     }
 }

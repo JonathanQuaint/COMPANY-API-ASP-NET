@@ -53,14 +53,41 @@ namespace CompanyAPI.Controllers
         }
 
 
+        
+        // GET: List All Expense in Area
+        [HttpGet("AllEquipmentExpenseInArea")]
+        public async Task<ActionResult<ResponseModel<double>>> AllEquipmentExpenseInArea(int areaId)
+        {
+            var result = await _equipmentInterface.ListAllEquipmentsExpenseinArea(areaId);
+            return Ok(result);
+        }
 
+        // GET: List All Expense in Branch
+        [HttpGet("AllEquipmentExpenseInBranch")]
+        public async Task<ActionResult<ResponseModel<double>>> AllEquipmentExpenseInBranch(int branchId)
+        {
+            var result = await _equipmentInterface.ListAllEquipmentsExpenseinBranch(branchId);
+            return Ok(result);
+        }
+
+        // GET: List All Equipment
+        [HttpGet("AllEquipments")]
+        public async Task<ActionResult<ResponseModel<List<EquipmentModel>>>> AllEquipments()
+        {
+            var equipments = await _equipmentInterface.AllEquipments();
+            return Ok(equipments);
+
+        }
 
         // DELETE: Delete Equipment
-        [HttpDelete("{id}")]
+        [HttpDelete("Equipment{id}")]
         public async Task<ActionResult<ResponseModel<bool>>> DeleteEquipment([FromRoute] int id)
         {
             var result = await _equipmentInterface.DeleteEquipment(id);
             return Ok(result);
         }
+
     }
+
+
 }

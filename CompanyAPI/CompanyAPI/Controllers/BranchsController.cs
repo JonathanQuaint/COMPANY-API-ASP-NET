@@ -39,12 +39,31 @@ namespace CompanyAPI.Controllers
             return Ok(branch);
         }
 
+      
+
         // GET: Filial Details 
         [HttpGet("FilialDetails")]
         public async Task<ActionResult<ResponseModel<BranchModel>>> DetailsFilial([FromQuery] int branchID)
         {
             var branch = await _branchService.InformationsAboutBranch(branchID);
             return Ok(branch);
+        }
+
+       
+        // GET: All Branches in Company
+        [HttpGet("AllBranchs")]
+        public async Task<ActionResult<ResponseModel<List<BranchModel>>>> AllBranchsInCompany(int companyID)
+        {
+            var branches = await _branchService.ListAllBranchsInCompany(companyID);
+            return Ok(branches);
+        }
+
+        // GET: All Branches in Company
+        [HttpGet("AllExpense")]
+        public async Task<ActionResult<ResponseModel<List<BranchModel>>>> AllExpenseinBranch(int branchid)
+        {
+            var branches = await _branchService.GetExpenseInBranch(branchid);
+            return Ok(branches);
         }
 
         // DELETE: Delete Branch
@@ -55,12 +74,5 @@ namespace CompanyAPI.Controllers
             return Ok(result);
         }
 
-        // GET: All Branches in Company
-        [HttpGet("AllCompanies")]
-        public async Task<ActionResult<ResponseModel<List<BranchModel>>>> AllBranchsInCompany(int companyID)
-        {
-            var branches = await _branchService.ListAllBranchsInCompany(companyID);
-            return Ok(branches);
-        }
     }
 }

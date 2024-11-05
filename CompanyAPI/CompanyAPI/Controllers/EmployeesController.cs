@@ -42,6 +42,9 @@ namespace CompanyAPI.Controllers
             return Ok(updatedEmployee);
         }
 
+
+
+
         // GET: Employee Details 
         [HttpGet("DetailsEmployee/{id}")]
         public async Task<ActionResult<ResponseModel<EmployeeModel>>> DetailsEmployee([FromRoute]int Id)
@@ -63,14 +66,6 @@ namespace CompanyAPI.Controllers
             return Ok(employee);
         }
 
-
-        // DELETE: Delete Equipment
-        [HttpDelete("DeleteEquipment/{id}")]
-        public async Task<ActionResult<ResponseModel<bool>>> DeleteEmployee([FromRoute] int id)
-        {
-            var result = await _employeeInterface.DeleteEmployee(id);
-            return Ok(result);
-        }
 
         // GET: List All Employees
         [HttpGet("AllEmployees")]
@@ -105,7 +100,29 @@ namespace CompanyAPI.Controllers
             return Ok(employees);
         }
 
+        // GET: List All Expense in Area
+        [HttpGet("AllEmployeesExpenseInArea")]
+        public async Task<ActionResult<ResponseModel<double>>> AllEmployeesExpenseInArea(int areaId)
+        {
+            var result = await _employeeInterface.ListAllEmployeesExpenseinArea(areaId);
+            return Ok(result);
+        }
 
+        // GET: List All Expense in Branch
+        [HttpGet("AllEmployeesExpenseInBranch")]
+        public async Task<ActionResult<ResponseModel<double>>> AllEmployeesExpenseInBranch(int branchId)
+        {
+            var result = await _employeeInterface.ListAllEmployeesExpenseinArea(branchId);
+            return Ok(result);
+        }
+
+        // DELETE: Delete employee
+        [HttpDelete("DeleteEmployee/{id}")]
+        public async Task<ActionResult<ResponseModel<bool>>> DeleteEmployee([FromRoute] int id)
+        {
+            var result = await _employeeInterface.DeleteEmployee(id);
+            return Ok(result);
+        }
 
     }
 }

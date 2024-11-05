@@ -33,7 +33,7 @@ namespace CompanyAPI.Controllers
         }
 
         // POST: Edit Company Details 
-        [HttpPost("EditCompany")]
+        [HttpPut("EditCompany")]
         public async Task<ActionResult<ResponseModel<List<CompanyModel>>>> EditCompany(EditCompanyDTOS companyInfos)
         {
             var company = await _companyInterface.UpdateCompany(companyInfos);

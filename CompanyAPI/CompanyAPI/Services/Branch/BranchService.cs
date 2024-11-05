@@ -159,6 +159,21 @@ namespace CompanyAPI.Services.Branch
             }
         }
 
+        public async Task<ResponseModel<double>> GetExpenseInBranch(int branchId)
+        {
+            ResponseModel<double> reply = new();
+            try
+            {
+                reply.Dados = await _branchRepository.CalculateAllExpenseInBranchAsync(branchId);
+                reply.Mensagem = "Expenses successfully retrieved";
+                return reply;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving expenses: {ex.Message}");
+            }
+        }
+
     }
 
 

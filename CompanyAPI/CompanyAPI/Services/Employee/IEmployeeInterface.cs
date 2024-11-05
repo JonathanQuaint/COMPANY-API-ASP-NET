@@ -13,8 +13,9 @@ namespace CompanyAPI.Services.Employee
         Task<ResponseModel<bool>> DeleteEmployee(int id);
         Task<ResponseModel<List<EmployeeModel>>> ListAllEmployeesInBranch(int areaId);
         Task<ResponseModel<List<EmployeeModel>>> ListAllEmployeesInArea(int areaId);
-
         Task<ResponseModel<List<EmployeeModel>>> ListAllEmployees();
+        Task<ResponseModel<double>> ListAllEmployeesExpenseinArea(int areaId);
+        Task<ResponseModel<double>> ListAllEmployeesExpenseinBranch(int branchId);
 
     }
 }

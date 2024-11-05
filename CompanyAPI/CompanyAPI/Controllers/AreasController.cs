@@ -39,26 +39,19 @@ namespace CompanyAPI.Controllers
             return Ok(area);
         }
 
-        // DELETE api/Area/DeleteArea/5
-        [HttpDelete("DeleteArea/{id}")]
-        public async Task<ActionResult<ResponseModel<List<AreaModel>>>> DeleteArea(int id)
-        {
-            var area = await _areaService.DeleteArea(id);
-            return Ok(area);
-        }
 
 
         // GET: api/Area
-        [HttpGet]
-        public async Task<ActionResult<ResponseModel<List<AreaModel>>>> GetAllAreas()
+        [HttpGet("AllAreas")]
+        public async Task<ActionResult<ResponseModel<List<AreaModel>>>> AllAreas()
         {
             var areas = await _areaService.ListAllAreas();
             return Ok(areas);
         }
 
         // GET api/Area/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseModel<AreaModel>>> GetAreaDetails(int id)
+        [HttpGet("AreaDetails")]
+        public async Task<ActionResult<ResponseModel<AreaModel>>> AreaDetails(int id)
         {
             var area = await _areaService.InformationsAboutArea(id);
             return Ok(area);
@@ -80,7 +73,21 @@ namespace CompanyAPI.Controllers
             return Ok(areas);
         }
 
+        // GET: All Branches in Company
+        [HttpGet("AllExpenseInArea")]
+        public async Task<ActionResult<ResponseModel<List<BranchModel>>>> AllExpenseinArea(int areaId)
+        {
+            var branches = await _areaService.GetExpenseInArea(areaId);
+            return Ok(branches);
+        }
 
-     
+
+        // DELETE api/Area/DeleteArea/5
+        [HttpDelete("DeleteArea/{id}")]
+        public async Task<ActionResult<ResponseModel<List<AreaModel>>>> DeleteArea(int id)
+        {
+            var area = await _areaService.DeleteArea(id);
+            return Ok(area);
+        }
     }
 }

@@ -16,8 +16,9 @@ namespace CompanyAPI.Repository.Employee
         Task<EmployeeModel?> GetAllDetailsAboutEmployeeAsync(int employeeId);
         Task<List<EmployeeModel>> GetAllEmployeesInCompanyAsync(int companyId);
         Task<List<EmployeeModel>> GetAllEmployeesInBranchAsync(int branchId);
-  
 
+        Task<double> AllEmployeesExpenseInArea(int areaId);
+        Task<double> AllEmployeesExpenseInBranch(int branchId);
 
     }
 }

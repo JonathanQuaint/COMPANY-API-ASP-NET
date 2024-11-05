@@ -3,6 +3,7 @@ using CompanyAPI.Dto.EquipmentDTOS;
 using CompanyAPI.Services.Exceptions;
 using CompanyAPI.ViewModel;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using System.ComponentModel.Design;
@@ -184,6 +185,58 @@ namespace CompanyAPI.Services.Equipment
             {
                 throw new Exception($"Error deleting equipment: {ex.Message}");
             }
+        }
+
+        public async Task<ResponseModel<double>> ListAllEquipmentsExpenseinArea(int areaId)
+        {
+            ResponseModel<double> reply = new();
+            try
+            {
+                reply.Dados = await _equipmentRepository.AllEquipmentExpenseInArea(areaId);
+                reply.Mensagem = "Equipments expense successfully retrieved";
+                return reply;
+            }
+
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving expense: {ex.Message}");
+            }
+
+        }
+
+        public async Task<ResponseModel<double>> ListAllEquipmentsExpenseinBranch(int branchId)
+        {
+            ResponseModel<double> reply = new();
+            try
+            {
+                reply.Dados = await _equipmentRepository.AllEquipmentExpenseInBranch(branchId);
+                reply.Mensagem = "Equipments expense successfully retrieved";
+                return reply;
+            }
+
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving expense: {ex.Message}");
+            }
+
+        }
+
+        public async Task<ResponseModel<List<EquipmentModel>>> AllEquipments()
+        {
+            ResponseModel<List<EquipmentModel>> reply = new();
+
+            try
+            {
+                reply.Dados = await _equipmentRepository.GetAllEquipmentsAsync();
+                reply.Mensagem = "Equipments successfully retrieved";
+                return reply;
+            }
+
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Error retrieving equipmets: {ex.Message}");
+            }
+
         }
     }
 }

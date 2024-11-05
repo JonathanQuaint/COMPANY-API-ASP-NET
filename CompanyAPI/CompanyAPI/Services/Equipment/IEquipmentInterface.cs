@@ -1,5 +1,6 @@
 ﻿using CompanyAPI.Dto.EquipmentDTOS;
 using CompanyAPI.ViewModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompanyAPI.Services.Equipment
 {
@@ -11,6 +12,10 @@ namespace CompanyAPI.Services.Equipment
         Task<ResponseModel<List<EquipmentModel>>> ListAllEquipmentsInCompany(int companyId);
         Task<ResponseModel<EquipmentModel>> DetailsAboutEquipment(int id);
         Task<ResponseModel<bool>> DeleteEquipment(int equipmentId);
+        Task<ResponseModel<double>> ListAllEquipmentsExpenseinArea(int areaId);
+        Task<ResponseModel<double>> ListAllEquipmentsExpenseinBranch(int branchId);
+        Task<ResponseModel<List<EquipmentModel>>> AllEquipments();
+
 
     }
 }

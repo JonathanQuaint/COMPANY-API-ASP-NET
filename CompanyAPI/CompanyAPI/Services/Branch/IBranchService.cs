@@ -11,6 +11,7 @@ namespace CompanyAPI.Services.Branch
         Task<ResponseModel<bool>> DeleteFilial(int branchId);
 
         Task<ResponseModel<List<BranchModel>>> ListAllBranchsInCompany(int companyId);
+        Task<ResponseModel<double>> GetExpenseInBranch(int branchId);
 
     }
 }
