@@ -33,7 +33,11 @@ namespace CompanyAPI.Services.Company
                 var company = new CompanyModel
                 {
                     Name = companyInfos.Name,
-                    MonthlyBilling = companyInfos.MonthyBilling
+                    MonthlyBilling = companyInfos.MonthlyBilling,
+                    Country = companyInfos.Country,
+                    Industry = companyInfos.Industry,
+                    CompanyType = companyInfos.CompanyType,
+                    Description = companyInfos.Description
                 };
 
                 await _companyRepository.AddCompanyAsync(company);
@@ -67,7 +71,11 @@ namespace CompanyAPI.Services.Company
                 var company = await _companyRepository.GetCompanyByIdAsync(companyInfos.IdOfCompany);
 
                 company.Name = companyInfos.Name;
-                company.MonthlyBilling = companyInfos.MonthyBilling;
+                company.MonthlyBilling = companyInfos.MonthlyBilling;
+                company.Country = companyInfos.Country;
+                company.Industry = companyInfos.Industry;
+                company.CompanyType = companyInfos.CompanyType;
+                company.Description = companyInfos.Description;
 
                 await _companyRepository.UpdateCompanyAsync(company);
 
@@ -138,6 +146,32 @@ namespace CompanyAPI.Services.Company
             }
         }
 
-     
+
+        public async Task<ResponseModel<bool>> DeleteCompany(int companyId)
+        {
+            ResponseModel<bool> reply = new ResponseModel<bool>();
+
+            try
+            {
+                var company = await _companyRepository.GetCompanyByIdAsync(companyId);
+
+                if (company == null)
+                {
+                    throw new NotFoundException("company not found");
+                }
+
+                await _companyRepository.DeleteCompanyAsync(company);
+               
+                reply.Dados = true;
+                reply.Mensagem = "Company deleted successfully";
+                return reply;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting company: {ex.Message}");
+            }
+        }
+
+
     }
 }

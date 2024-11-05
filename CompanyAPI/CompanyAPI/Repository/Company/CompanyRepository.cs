@@ -82,7 +82,6 @@ namespace CompanyAPI.Repository.Company
         public async Task<CompanyModel> GetAllDetailsAboutCompanyAsync(int companyId)
         {
             return await _context.Company
-                .Include(x => x.Expense)
                 .Include(x => x.Branch)
                 .FirstOrDefaultAsync(x => x.Id == companyId);
         }

@@ -25,12 +25,17 @@ namespace CompanyAPI.Services.Equipment
 
             try
             {
-       
+
                 var equipment = new EquipmentModel()
                 {
                     AreaId = equipmentDto.AreaId,
                     Name = equipmentDto.NameEquipment,
-                    Price = equipmentDto.Price
+                    Price = equipmentDto.Price,
+                    AcquisitionDate = equipmentDto.AcquisitionDate,
+                    Manufacturer = equipmentDto.Manufacturer,
+                    Model = equipmentDto.Model,
+                    Description = equipmentDto.Description
+
                 };
 
                 await _equipmentRepository.AddEquipmentAsync(equipment);

@@ -26,7 +26,10 @@ namespace CompanyAPI.Services.Area
                 var area = new AreaModel
                 {
                     NameArea = areaDto.NameArea,
-                    BranchId = areaDto.BranchLinkedId
+                    BranchId = areaDto.BranchLinkedId,
+                    Description = areaDto.Description,
+                    CreationDate = areaDto.CreationDate
+
                 };
 
                 await _areaRepository.AddAreaAsync(area);
@@ -71,6 +74,8 @@ namespace CompanyAPI.Services.Area
 
                 area.NameArea = areaDto.NameArea;
                 area.BranchId = areaDto.BranchLinkedId;
+                area.CreationDate = areaDto.CreationDate;
+                area.Description = areaDto.Description;
 
                 await _areaRepository.UpdateAreaAsync(area);
 

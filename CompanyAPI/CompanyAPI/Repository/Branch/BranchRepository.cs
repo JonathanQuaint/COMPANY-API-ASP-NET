@@ -90,12 +90,12 @@ namespace CompanyAPI.Repository.Branch
 
         public async Task<BranchModel> GetBranchByIdAsync(int branchId)
         {
-            return await _context.Branchs.FindAsync(branchId);
+            return await _context.Branchs.FirstOrDefaultAsync(e => e.Id == branchId);
         }
 
-        public async Task<BranchModel> GetBranchByHeadOfficeAsync(string branchName)
+        public async Task<BranchModel> GetBranchByHeadOfficeAsync(string branchState)
         {
-            return await _context.Branchs.FirstOrDefaultAsync(b => b.HeadOffice == branchName);
+            return await _context.Branchs.FirstOrDefaultAsync(b => b.State == branchState);
         }
 
         public async Task<List<BranchModel>> GetBranchesInCompanyAsync(int companyId)
@@ -131,7 +131,6 @@ namespace CompanyAPI.Repository.Branch
         public async Task<BranchModel> GetAllDetailsAboutBranchAsync(int branchId)
         {
             return await _context.Branchs
-                .Include(b => b.CompanyLinked)
                 .Include(b => b.Areas)
                 .Include(b => b.Employees)
                 .Include(b => b.Equipments)
@@ -140,7 +139,7 @@ namespace CompanyAPI.Repository.Branch
 
         public async Task<bool> CheckBranchExistByHeadOfficeAsync(string name)
         {
-            return await _context.Branchs.AnyAsync(b => b.HeadOffice == name);
+            return await _context.Branchs.AnyAsync(b => b.State == name);
         }
 
         public async Task<bool> CheckBranchExistByIdAsync(int branchId)

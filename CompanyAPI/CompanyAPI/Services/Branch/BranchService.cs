@@ -24,15 +24,20 @@ namespace CompanyAPI.Services.Branch
 
             try
             {
-                bool branchExists = await _branchRepository.CheckBranchExistByHeadOfficeAsync(branchDto.HeadOffice);
+                bool branchExists = await _branchRepository.CheckBranchExistByHeadOfficeAsync(branchDto.State);
                 if (branchExists)
                 {
-                    throw new ConflictException("This HeadOffice already exists");
+                    throw new ConflictException("There is another branch linked to that state");
                 }
 
                 var Branch = new BranchModel()
                 {
-                    HeadOffice = branchDto.HeadOffice,
+                    State = branchDto.State,
+                    Country = branchDto.Country,
+                    Address = branchDto.Address,
+                    City = branchDto.City,
+                    CreationDate = branchDto.CreationDate
+
                 };
 
 
@@ -72,7 +77,15 @@ namespace CompanyAPI.Services.Branch
 
                 branch.CompanyID = branchDto.CompanyLinkedID;
 
-                branch.HeadOffice = branchDto.HeadOffice;
+                branch.State = branchDto.State;
+
+                branch.Country = branchDto.Country;
+
+                branch.Address = branchDto.Address;
+
+                branch.City = branchDto.City;
+
+                branch.CreationDate = branchDto.CreationDate;
 
                 await _branchRepository.UpdateBranchAsync(branch);
 

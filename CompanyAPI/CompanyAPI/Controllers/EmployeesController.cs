@@ -4,6 +4,7 @@ using CompanyAPI.Services.Area;
 using CompanyAPI.Services.Company;
 using CompanyAPI.Services.Employee;
 using CompanyAPI.Services.Equipment;
+using CompanyAPI.Services.Exceptions;
 using CompanyAPI.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,19 +47,30 @@ namespace CompanyAPI.Controllers
 
 
         // GET: Employee Details 
-        [HttpGet("DetailsEmployee/{id}")]
-        public async Task<ActionResult<ResponseModel<EmployeeModel>>> DetailsEmployee([FromRoute]int Id)
+        [HttpGet("DetailsEmployee/{employeeId:int}")]
+        public async Task<IActionResult> DetailsEmployee(int employeeId)
         {
-            var employee = await _employeeInterface.InformationsAboutEmployee(Id);
-            return Ok(employee);
+            try
+            {
+                var response = await _employeeInterface.InformationsAboutEmployee(employeeId);
+                if (response.Dados == null)
+                {
+                    return NotFound(response.Mensagem);
+                }
+                return Ok(response);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
 
         // GET: GET Employee
-        [HttpGet("GetEmployee/{id}")]
-        public async Task<ActionResult<ResponseModel<EmployeeModel>>> GetEmployee([FromRoute] int id)
+        [HttpGet("GetEmployee/{employeeId:int}")]
+        public async Task<ActionResult<ResponseModel<EmployeeModel>>> GetEmployee([FromRoute] int employeeId)
         {
-            var employee = await _employeeInterface.GetEmployee(id);
+            var employee = await _employeeInterface.GetEmployee(employeeId);
             if (employee == null)
             {
                 return NotFound();
@@ -77,15 +89,15 @@ namespace CompanyAPI.Controllers
 
 
         // GET: List All Employees in Branch
-        [HttpGet("AllEmployeesInCompany")]
-        public async Task<ActionResult<ResponseModel<List<EmployeeModel>>>> AllEmployeesInCompany(int company)
+        [HttpGet("AllEmployeesInCompany/{companyId:int}")]
+        public async Task<ActionResult<ResponseModel<List<EmployeeModel>>>> AllEmployeesInCompany(int companyId)
         {
-            var employees = await _employeeInterface.ListAllEmployeesInCompany(company);
+            var employees = await _employeeInterface.ListAllEmployeesInCompany(companyId);
             return Ok(employees);
         }
 
         // GET: List All Employees In Branch
-        [HttpGet("AllEmployeesInBranch")]
+        [HttpGet("AllEmployeesInBranch/{branchId:int}")]
         public async Task<ActionResult<ResponseModel<List<EmployeeModel>>>> AllEmployeesInBranch(int branchId)
         {
             var employees = await _employeeInterface.ListAllEmployeesInBranch(branchId);
@@ -93,7 +105,7 @@ namespace CompanyAPI.Controllers
         }
 
         // GET: List All 
-        [HttpGet("AllEmployeesInArea")]
+        [HttpGet("AllEmployeesInArea/{areaId:int}")]
         public async Task<ActionResult<ResponseModel<List<EmployeeModel>>>> AllEmployeesInArea(int areaId)
         {
             var employees = await _employeeInterface.ListAllEmployeesInArea(areaId);
@@ -101,7 +113,7 @@ namespace CompanyAPI.Controllers
         }
 
         // GET: List All Expense in Area
-        [HttpGet("AllEmployeesExpenseInArea")]
+        [HttpGet("AllEmployeesExpenseInArea/{areaId:int}")]
         public async Task<ActionResult<ResponseModel<double>>> AllEmployeesExpenseInArea(int areaId)
         {
             var result = await _employeeInterface.ListAllEmployeesExpenseinArea(areaId);
@@ -109,7 +121,7 @@ namespace CompanyAPI.Controllers
         }
 
         // GET: List All Expense in Branch
-        [HttpGet("AllEmployeesExpenseInBranch")]
+        [HttpGet("AllEmployeesExpenseInBranch/{branchId:int}")]
         public async Task<ActionResult<ResponseModel<double>>> AllEmployeesExpenseInBranch(int branchId)
         {
             var result = await _employeeInterface.ListAllEmployeesExpenseinArea(branchId);
@@ -117,10 +129,10 @@ namespace CompanyAPI.Controllers
         }
 
         // DELETE: Delete employee
-        [HttpDelete("DeleteEmployee/{id}")]
-        public async Task<ActionResult<ResponseModel<bool>>> DeleteEmployee([FromRoute] int id)
+        [HttpDelete("DeleteEmployee/{employeeId:int}")]
+        public async Task<ActionResult<ResponseModel<bool>>> DeleteEmployee([FromRoute] int employeeid)
         {
-            var result = await _employeeInterface.DeleteEmployee(id);
+            var result = await _employeeInterface.DeleteEmployee(employeeid);
             return Ok(result);
         }
 

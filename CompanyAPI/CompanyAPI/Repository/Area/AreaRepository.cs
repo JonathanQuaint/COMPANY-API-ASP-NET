@@ -102,7 +102,7 @@ namespace CompanyAPI.Repository.Area
 
         public async Task<AreaModel> GetAreaByIdAsync(int areaId)
         {
-            return await _context.Areas.FindAsync(areaId);
+            return await _context.Areas.FirstOrDefaultAsync(e => e.Id == areaId);
         }
 
 
@@ -146,10 +146,6 @@ namespace CompanyAPI.Repository.Area
             }
 
             return await _context.Areas
-                .Include(a => a.Id)
-                .Include(a => a.BranchId)
-                .Include(a => a.LinkedBranch)
-                .Include(a => a.Expense)
                 .Include(a => a.Employees)
                 .Include(a => a.Equipments)
                 .FirstOrDefaultAsync(a => a.Id == areaId);

@@ -15,5 +15,7 @@ namespace CompanyAPI.Services.Company
 
         Task<ResponseModel<List<IGrouping<BranchModel, AreaModel>>>> ListAllInCompany(int companyId);
 
+        Task<ResponseModel<bool>> DeleteCompany(int companyId);
+
     }
 }

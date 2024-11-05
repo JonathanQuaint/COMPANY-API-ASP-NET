@@ -2,6 +2,7 @@
 using CompanyAPI.Services.Exceptions;
 using CompanyAPI.ViewModel;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 
 namespace CompanyAPI.Repository.Employee
 {
@@ -53,11 +54,18 @@ namespace CompanyAPI.Repository.Employee
                 areaLinked.LinkedBranch.Employees = new List<EmployeeModel>();
             }
 
+            var branch = areaLinked.LinkedBranch; 
+
             areaLinked.EmployeesExpense += employee.Salary;
-            areaLinked.LinkedBranch.EmployeesExpense += employee.Salary;
+            areaLinked.Expense += employee.Salary;
+
+            branch.EmployeesExpense += employee.Salary;
+            branch.Expense += employee.Salary;
+
             employee.AreaLinked = areaLinked;
+
             areaLinked.Employees.Add(employee);
-            areaLinked.LinkedBranch.Employees.Add(employee);
+            branch.Employees.Add(employee);
 
             await _context.Employees.AddAsync(employee);
             await _context.SaveChangesAsync();
@@ -111,7 +119,7 @@ namespace CompanyAPI.Repository.Employee
 
         public async Task<EmployeeModel> GetEmployeeByIdAsync(int employeeId)
         {
-            return await _context.Employees.FindAsync(employeeId);
+            return await _context.Employees.FirstOrDefaultAsync(e =>  e.Id == employeeId);
         }
 
         public async Task<List<EmployeeModel>> GetEmployeesInAreaAsync(int areaId)
@@ -161,13 +169,19 @@ namespace CompanyAPI.Repository.Employee
             return await _context.Employees.AnyAsync(e => e.Id == employeeId);
         }
 
-        public async Task<EmployeeModel> GetAllDetailsAboutEmployeeAsync(int employeeId)
+        public async Task<EmployeeModel?> GetAllDetailsAboutEmployeeAsync(int employeeId)
         {
-            return await _context.Employees
+            var employee = await _context.Employees
                 .Include(e => e.AreaLinked)
-                .Include(e => e.Salary)
-
+                .ThenInclude(a => a.LinkedBranch)
                 .FirstOrDefaultAsync(e => e.Id == employeeId);
+
+            if (employee == null)
+            {
+                throw new NotFoundException("Employee not found");
+            }
+
+            return employee;
         }
 
         public async Task<double> AllEmployeesExpenseInArea(int areaId)

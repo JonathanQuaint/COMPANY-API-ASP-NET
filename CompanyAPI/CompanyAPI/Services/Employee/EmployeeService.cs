@@ -28,7 +28,10 @@ namespace CompanyAPI.Services.Employee
                 {
                     Name = employeeDto.NameEmployee,
                     AreaId = employeeDto.AreaId,
-                    Salary = employeeDto.Salary
+                    Salary = employeeDto.Salary,
+                    IdentificationNumber = employeeDto.IdentificationNumber,
+                    Position = employeeDto.Position,
+                    Department = employeeDto.Department
                 };
 
                 await _employeeRepository.AddEmployeeAsync(employee);
@@ -52,13 +55,13 @@ namespace CompanyAPI.Services.Employee
                
 
                 reply.Dados = await _employeeRepository.GetAllDetailsAboutEmployeeAsync(employeeId);
-                reply.Mensagem = "Area information successfully retrieved";
+                reply.Mensagem = "employee information successfully retrieved";
 
                 return reply;
             }
             catch (DbUpdateException ex)
             {
-                throw new DbUpdateException($"Error retrieving area information: {ex.Message}");
+                throw new DbUpdateException($"Error employee area information: {ex.Message}");
             }
         }
 
@@ -80,6 +83,10 @@ namespace CompanyAPI.Services.Employee
                 employee.Name = employeeDto.NameEmployee;
                 employee.Salary = employeeDto.Salary;
                 employee.AreaId = employeeDto.AreaId;
+                employee.IdentificationNumber = employeeDto.IdentificationNumber;
+                employee.Position = employeeDto.Position;
+                employee.Department = employeeDto.Department;
+                
 
                 employee.AreaLinked.Expense += salaryDiference;
                 employee.AreaLinked.LinkedBranch.Expense += salaryDiference;

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CompanyAPI.ViewModel.DateModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -9,10 +10,17 @@ namespace CompanyAPI.ViewModel
     {
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "The name of area is required")]
         public string NameArea { get; set; }
 
         public int BranchId { get; set; }
+
         public BranchModel LinkedBranch { get; set; }
+
+        public string Description { get; set; }
+
+        [JsonConverter(typeof(CustomDate))]
+        public DateTime CreationDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:F2}")]
         public double Expense { get; set; }
@@ -21,15 +29,18 @@ namespace CompanyAPI.ViewModel
 
         public double EquipmentsExpense { get; set; }
 
-        [JsonIgnore]
+        public int EmployeeCount => Employees?.Count ?? 0;
+
+        public int EquipmentCount => Equipments?.Count ?? 0;
+
         public ICollection<EmployeeModel> Employees { get; set; } = new List<EmployeeModel>();
 
-        [JsonIgnore]
         public ICollection<EquipmentModel> Equipments { get; set; } = new List<EquipmentModel>();
 
 
         public AreaModel()
         {
+
         }
 
         public AreaModel(int id, string nameArea, BranchModel branch)
@@ -37,6 +48,8 @@ namespace CompanyAPI.ViewModel
             Id = id;
             NameArea = nameArea;
             LinkedBranch = branch;
+          
         }
+
     }
 }

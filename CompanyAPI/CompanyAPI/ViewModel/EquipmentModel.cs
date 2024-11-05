@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using CompanyAPI.ViewModel.DateModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace CompanyAPI.ViewModel
 {
@@ -13,8 +15,12 @@ namespace CompanyAPI.ViewModel
         public AreaModel AreaLinked { get; set; }
 
         public double Price { get; set; }
-      
 
+        [JsonConverter(typeof(CustomDate))]
+        public DateTime AcquisitionDate { get; set; }
+        public string Manufacturer { get; set; }
+        public string Model { get; set; }
+        public string Description { get; set; }
         public EquipmentModel()
         {
             

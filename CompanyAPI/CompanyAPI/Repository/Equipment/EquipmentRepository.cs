@@ -166,7 +166,7 @@ namespace CompanyAPI.Repository.Equipment
 
         public async Task<EquipmentModel?> GetEquipmentByIdAsync(int equipmentId)
         {
-            return await _context.Equipments.FindAsync(equipmentId);
+            return await _context.Equipments.FirstOrDefaultAsync(e => e.Id == equipmentId);
         }
 
         public async Task<List<EquipmentModel>> GetEquipmentsInAreaAsync(int areaId)
@@ -214,11 +214,8 @@ namespace CompanyAPI.Repository.Equipment
         public async Task<EquipmentModel?> GetAllDetailsAboutEquipmentAsync(int equipmentId)
         {
             return await _context.Equipments
-                .Include(e => e.Id)
-                .Include(e => e.Name)
-                .Include(e => e.AreaId)
                 .Include(e => e.AreaLinked)
-                .Include(e => e.Price)
+                .ThenInclude(a => a.LinkedBranch)
                 .FirstOrDefaultAsync(e => e.Id == equipmentId);
         }
 
